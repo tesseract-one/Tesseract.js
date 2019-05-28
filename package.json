@@ -1,0 +1,35 @@
+{
+  "version": "0.0.1",
+  "name": "@tesseract/sdk",
+  "description": "Browser plugin version of Tesseract Wallet",
+  "homepage": "https://tesseract.one",
+  "private": false,
+  "license": "Apache-2.0",
+  "author": "Tesseract Systems, Inc.",
+  "keywords": [
+    "web3",
+    "wallet",
+    "plugin"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tesseract-one/Tesseract.js.git"
+  },
+  "bugs": {
+    "url": "https://github.com/tesseract-one/Tesseract.js/issues"
+  },
+  "main": "dist/index.js",
+  "types": "dist/d.ts/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "lint": "tslint --project ."
+  },
+  "dependencies": {
+    "web3": "^1.0.0-beta.55"
+  },
+  "devDependencies": {
+    "@types/web3": "^1.0.18",
+    "tslint": "^5.16.0",
+    "typescript": "^3.4.5"
+  }
+}
