@@ -16,8 +16,7 @@ Object.defineProperty(Tesseract, "Ethereum", {
       _ETHEREUM_INSTANCE = new Ethereum(this.OpenWallet)
     }
     return _ETHEREUM_INSTANCE!
-  },
-  writable: false
+  }
 })
 
 export { Ethereum }

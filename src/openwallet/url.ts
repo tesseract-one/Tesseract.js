@@ -98,9 +98,9 @@ export class CallbackURLProvider implements IProvider {
 
     this.timeouts.push([message.id, Date.now()])
     const data = encodeURIComponent(btoa(JSON.stringify(message)))
-    const api = type.toLowerCase().replace('_', '-')
+    const api = type.toLowerCase().replace(/_/g, '-')
     const callback = window.location.href.split("#")[0]
-    window.open(`${api}://?message=${data}&callback=${callback}`)
+    window.open(`${api}://?message=${data}&callback=${callback}`, '_blank')
   }
 
   start() {

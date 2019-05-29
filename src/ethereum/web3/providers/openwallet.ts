@@ -8,8 +8,7 @@ type SendMethod = (method: string, parameters: any[]) => Promise<any>
 
 const HANDLERS: {
   [method: string]: (
-    eth: Ethereum, method: string, parameters: any[], netId: number, chainId: string,
-    provider: Provider, send: SendMethod
+    eth: Ethereum, method: string, parameters: any[], netId: number, chainId: string, provider: Provider
   ) => Promise<any>
 } = {}
 
@@ -37,10 +36,10 @@ HANDLERS['eth_sign'] = function (eth, _, parameters, netId) {
   return eth.signData(parameters[0], parameters[1], netId)
 }
 
-HANDLERS['eth_sendTransaction'] = function (eth, _, params, netId, chainId, provider, send) {
+HANDLERS['eth_sendTransaction'] = function (eth, _, params, netId, chainId, provider) {
   return eth
     .signTx(params[0], netId, chainId)
-    .then(signed => send.call(provider, 'eth_sendRawTransaction', [signed]))
+    .then(signed => provider.send('eth_sendRawTransaction', [signed]))
 }
 
 export class Web3OpenWalletProvider implements ProxyHandler<Provider> {
@@ -67,7 +66,7 @@ export class Web3OpenWalletProvider implements ProxyHandler<Provider> {
     switch (p) {
       case 'fallback': return this.fallback
       case 'ethereum': return this.ethereum
-      case 'send': return this._wrapSend(target, receiver)
+      case 'send': return this._wrapSend(target)
       default: return Reflect.get(target, p, receiver)
     }
   }
@@ -86,29 +85,27 @@ export class Web3OpenWalletProvider implements ProxyHandler<Provider> {
     return Reflect.ownKeys(target).concat(['fallback', 'ethereum'])
   }
 
-  private _getNetId(provider: Provider, send: SendMethod): Promise<number> {
+  private _getNetId(provider: Provider): Promise<number> {
     if (this.netId) {
       return Promise.resolve(this.netId)
     }
-    return send.call(provider, 'net_version', []).then(version => this.netId = parseInt(version, 10))
+    return provider.send('net_version', []).then(version => this.netId = parseInt(version, 10))
   }
 
-  private _getChainId(provider: Provider, send: SendMethod): Promise<string> {
+  private _getChainId(provider: Provider): Promise<string> {
     if (this.chainId) {
       return Promise.resolve(this.chainId)
     }
-    return send.call(provider, 'eth_chainId', []).then(chainId => this.chainId = chainId)
+    return provider.send('eth_chainId', []).then(chainId => this.chainId = chainId)
   }
 
-  private _wrapSend(target: Provider, receiver: any): SendMethod {
-    const self = this
-    const send = Reflect.get(target, 'send', receiver) as SendMethod
-    return function (this: Provider, method, parameters) {
+  private _wrapSend(target: Provider): SendMethod {
+    return (method, parameters) => {
       let handler = HANDLERS[method]
       return handler
-        ? Promise.all([self._getChainId(this, send), self._getNetId(this, send)])
-          .then(([chainId, netId]) => handler(self.ethereum, method, parameters, netId, chainId, this, send)) 
-        : send.call(this, method, parameters)
+        ? Promise.all([this._getChainId(target), this._getNetId(target)])
+          .then(([chainId, netId]) => handler(this.ethereum, method, parameters, netId, chainId, target)) 
+        : target.send(method, parameters)
     }
   }
 

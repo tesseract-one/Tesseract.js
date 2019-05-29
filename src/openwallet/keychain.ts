@@ -19,3 +19,5 @@ OpenWallet.prototype.keychain = function<Res, Req extends IKeychainRequest<strin
   }
   return this.send<Res, IRequest<string, Req, Res>>(owReq)
 }
+
+export { OpenWallet }

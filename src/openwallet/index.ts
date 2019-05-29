@@ -19,8 +19,7 @@ Object.defineProperty(Tesseract, "OpenWallet", {
       _OPENWALLET_INSTANCE = new OpenWallet(OpenWallet.defaultProviders)
     }
     return _OPENWALLET_INSTANCE!
-  },
-  writable: false
+  }
 })
 
 OpenWallet.defaultProviders.push(new NativeProvider())

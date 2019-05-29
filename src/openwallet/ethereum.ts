@@ -1,6 +1,5 @@
-import { OpenWallet } from './openwallet'
 import { Network, API } from './types'
-import { IKeychainRequest } from  './keychain'
+import { IKeychainRequest, OpenWallet } from  './keychain'
 
 var _ETHEREUM_INSTANCE: Ethereum | undefined = undefined
 
@@ -112,6 +111,5 @@ Object.defineProperty(OpenWallet.prototype, "Ethereum", {
       _ETHEREUM_INSTANCE = new Ethereum(this)
     }
     return _ETHEREUM_INSTANCE!
-  },
-  writable: false
+  }
 })
