@@ -1,5 +1,13 @@
 import { IProvider, IRequest, API, HasApiRequest } from './types'
 
+export interface OpenWalletPluginFactory<T> {
+  (openWallet: OpenWallet): T
+}
+
+export interface OpenWalletMethodPluginFactory {
+  (proto: OpenWallet): void
+}
+
 export class OpenWallet {
   public provider?: IProvider
 
@@ -39,5 +47,20 @@ export class OpenWallet {
 
   public send<R, P extends IRequest<string, any, R>>(message: P): Promise<R> {
     return this.provider!.send(message)
+  }
+
+  public static addPlugin<T>(prop: string, factory: OpenWalletPluginFactory<T>) {
+    Object.defineProperty(this.prototype, prop, {
+      get(): T {
+        if (!this.plugins[prop]) {
+          this.plugins[prop] = factory(this)
+        }
+        return this.plugins[prop]
+      }
+    })
+  }
+
+  public static addMethodPlugin(factory: OpenWalletMethodPluginFactory) {
+    factory(this.prototype)
   }
 }

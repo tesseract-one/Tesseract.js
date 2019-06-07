@@ -1,7 +1,7 @@
 {
   "version": "0.0.1",
-  "name": "@tesseract/sdk",
-  "description": "Browser plugin version of Tesseract Wallet",
+  "name": "@tesseract/meta",
+  "description": "Tesseract metapackage",
   "homepage": "https://tesseract.one",
   "private": false,
   "license": "Apache-2.0",
@@ -18,17 +18,21 @@
   "bugs": {
     "url": "https://github.com/tesseract-one/Tesseract.js/issues"
   },
-  "main": "dist/index.js",
-  "types": "dist/d.ts/index.d.ts",
   "scripts": {
-    "build": "tsc",
-    "lint": "tslint --project ."
-  },
-  "dependencies": {
-    "web3": "^1.0.0-beta.55"
+    "clean": "lerna clean",
+    "link": "lerna link",
+    "bootstrap": "lerna bootstrap",
+    "lint": "lerna run tslint",
+    "build": "lerna run build",
+    "publish": "npm run bootstrap && lerna publich --skip-git"
   },
   "devDependencies": {
-    "tslint": "^5.16.0",
-    "typescript": "^3.4.5"
+    "lerna": "^3.14.1",
+    "rollup": "^1.14.3",
+    "rollup-plugin-auto-external": "^2.0.0",
+    "rollup-plugin-cleanup": "^3.1.1",
+    "rollup-plugin-typescript2": "^0.21.1",
+    "tslint": "^5.17.0",
+    "typescript": "^3.5.1"
   }
 }

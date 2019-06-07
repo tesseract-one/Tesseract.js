@@ -19,9 +19,11 @@ declare module '../ethereum' {
   }
 }
 
-Ethereum.prototype.Web3 = function(rpcUrl, options, rpcOptions) {
-  return Web3.create(Web3.defaultProviders, this.openWallet, rpcUrl, options, rpcOptions)
-}
+Ethereum.addMethodPlugin((proto) => {
+  proto.Web3 = function(rpcUrl, options, rpcOptions) {
+    return Web3.create(Web3.defaultProviders, this.openWallet, rpcUrl, options, rpcOptions)
+  }
+})
 
 Web3.defaultProviders.push(Web3NativeOpenWalletProvider)
 Web3.defaultProviders.push(Web3NativeProvider)

@@ -1,0 +1,31 @@
+{
+  "version": "0.0.1",
+  "name": "@tesseract/core",
+  "description": "Browser plugin version of Tesseract Wallet",
+  "homepage": "https://tesseract.one",
+  "private": false,
+  "license": "Apache-2.0",
+  "author": "Tesseract Systems, Inc.",
+  "keywords": [
+    "web3",
+    "wallet",
+    "plugin"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tesseract-one/Tesseract.js/tree/main/packages/core"
+  },
+  "bugs": {
+    "url": "https://github.com/tesseract-one/Tesseract.js/issues"
+  },
+  "main": "dist/core.cjs.js",
+  "module": "dist/core.es.js",
+  "browser": "dist/core.umd.js",
+  "types": "dist/types/index.d.ts",
+  "files": ["dist"],
+  "scripts": {
+    "build": "rollup -c",
+    "dev": "rollup -wc",
+    "lint": "tslint --project ."
+  }
+}

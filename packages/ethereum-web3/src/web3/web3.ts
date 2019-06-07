@@ -1,6 +1,6 @@
 import Web3JS from 'web3'
 import { Web3ModuleOptions } from 'web3-core'
-import { OpenWallet } from '../../openwallet'
+import { OpenWallet } from '@tesseract/openwallet'
 import { IWeb3Provider, IWeb3ProviderFactory } from './types'
 import { HttpProviderOptions, WebsocketProviderOptions } from 'web3-providers'
 

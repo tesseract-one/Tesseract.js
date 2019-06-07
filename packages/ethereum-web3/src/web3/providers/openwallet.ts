@@ -1,6 +1,6 @@
 import { IWeb3Provider, Web3ProviderOptions } from '../types'
-import { OpenWallet } from '../../../openwallet'
-import { Ethereum } from '../../../openwallet/ethereum'
+import { OpenWallet } from '@tesseract/openwallet'
+import { Ethereum } from '@tesseract/openwallet-ethereum'
 import { HttpProvider, WebsocketProvider, HttpProviderOptions } from 'web3-providers'
 
 type Provider = (HttpProvider | WebsocketProvider) & IWeb3Provider
