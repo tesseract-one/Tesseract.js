@@ -1,16 +1,34 @@
-import { TesseractModule } from '@tesseract/core'
-import { Ethereum } from './ethereum'
-import "@tesseract/openwallet"
-import "@tesseract/openwallet-ethereum"
 
-declare module '@tesseract/core' {
-  interface TesseractModule {
-    Ethereum: Ethereum
+import { Web3 } from './web3'
+import { Ethereum } from '@tesseract/ethereum'
+import { Web3ModuleOptions } from 'web3-core'
+import { HttpProviderOptions, WebsocketProviderOptions } from 'web3-providers'
+
+import { 
+  Web3FallbackProvider, Web3NativeOpenWalletProvider,
+  Web3NativeProvider, Web3OpenWalletProvider
+} from './providers'
+
+declare module '@tesseract/ethereum' {
+  interface Ethereum {
+    Web3(
+      rpcUrl: string,
+      options?: Web3ModuleOptions,
+      rpcOptions?: HttpProviderOptions | WebsocketProviderOptions
+    ): Promise<Web3>
   }
 }
 
-TesseractModule.addPlugin("Ethereum", (tesseract) => {
-  return new Ethereum(tesseract.OpenWallet)
+Ethereum.addMethodPlugin((proto) => {
+  proto.Web3 = function(rpcUrl, options, rpcOptions) {
+    return Web3.create(Web3.defaultProviders, this.openWallet, rpcUrl, options, rpcOptions)
+  }
 })
 
-export { Ethereum }
+Web3.defaultProviders.push(Web3NativeOpenWalletProvider)
+Web3.defaultProviders.push(Web3NativeProvider)
+Web3.defaultProviders.push(Web3OpenWalletProvider)
+Web3.defaultProviders.push(Web3FallbackProvider)
+
+
+export { Web3, Web3FallbackProvider, Web3NativeOpenWalletProvider, Web3NativeProvider, Web3OpenWalletProvider, Ethereum }

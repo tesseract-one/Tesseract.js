@@ -1,6 +1,6 @@
 {
   "version": "0.0.1",
-  "name": "@tesseract/openwallet-ethereum",
+  "name": "@tesseract/ethereum",
   "description": "Browser plugin version of Tesseract Wallet",
   "homepage": "https://tesseract.one",
   "private": false,
@@ -18,9 +18,9 @@
   "bugs": {
     "url": "https://github.com/tesseract-one/Tesseract.js/issues"
   },
-  "main": "dist/openwallet-ethereum.cjs.js",
-  "module": "dist/openwallet-ethereum.es.js",
-  "browser": "dist/openwallet-ethereum.umd.js",
+  "main": "dist/ethereum.cjs.js",
+  "module": "dist/ethereum.es.js",
+  "browser": "dist/ethereum.umd.js",
   "types": "dist/types/index.d.ts",
   "files": ["dist"],
   "scripts": {
@@ -29,7 +29,7 @@
     "lint": "tslint --project ."
   },
   "dependencies": {
-    "@tesseract/ethereum": "0.0.1",
+    "@tesseract/core": "0.0.1",
     "@tesseract/openwallet": "0.0.1"
   }
 }

@@ -1,4 +1,4 @@
 import { rollupConfig, packageNames } from '../../rollup.config';
 import pkg from './package.json'
 
-export default rollupConfig(packageNames[pkg.name], 'openwallet-ethereum', packageNames);
+export default rollupConfig(packageNames[pkg.name], 'ethereum', packageNames);

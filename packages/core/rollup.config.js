@@ -1,3 +1,4 @@
-import { rollupConfig } from '../../rollup.config';
+import { rollupConfig, packageNames } from '../../rollup.config';
+import pkg from './package.json'
 
-export default rollupConfig('Tesseract', "core");
+export default rollupConfig(packageNames[pkg.name], 'core', packageNames);

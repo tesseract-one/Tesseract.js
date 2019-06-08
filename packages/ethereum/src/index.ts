@@ -1,4 +1,5 @@
 import { OpenWallet } from '@tesseract/openwallet'
+import { TesseractModule } from '@tesseract/core'
 
 export interface EthereumPluginFactory<T> {
   (instance: Ethereum): T
@@ -9,6 +10,8 @@ export interface EthereumMethodPluginFactory {
 }
 
 export class Ethereum {
+  public static plugins: { [name: string]: any; } = {}
+
   public openWallet: OpenWallet
 
   constructor(openWallet: OpenWallet) {
@@ -16,12 +19,13 @@ export class Ethereum {
   }
 
   public static addPlugin<T>(prop: string, factory: EthereumPluginFactory<T>) {
+    const self = this
     Object.defineProperty(this.prototype, prop, {
       get(): T {
-        if (!this.plugins[prop]) {
-          this.plugins[prop] = factory(this)
+        if (!self.plugins[prop]) {
+          self.plugins[prop] = factory(this)
         }
-        return this.plugins[prop]
+        return self.plugins[prop]
       }
     })
   }
@@ -30,3 +34,16 @@ export class Ethereum {
     factory(this.prototype)
   }
 }
+
+declare module '@tesseract/core' {
+  interface TesseractModule {
+    Ethereum: Ethereum
+  }
+}
+
+TesseractModule.addPlugin("Ethereum", (tesseract) => {
+  return new Ethereum(tesseract.OpenWallet)
+})
+
+export { TesseractModule }
+export * from './types'

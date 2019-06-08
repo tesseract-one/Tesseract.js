@@ -65,6 +65,6 @@ declare module '@tesseract/openwallet' {
   }
 }
 
-OpenWallet.addPlugin("Ethereum", (openWallet) => {
-  return new Ethereum(openWallet)
-})
+OpenWallet.addPlugin("Ethereum", (openWallet) => new Ethereum(openWallet))
+
+export { OpenWallet, Network }

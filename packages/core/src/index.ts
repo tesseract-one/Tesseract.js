@@ -7,12 +7,13 @@ export class TesseractModule {
   public static plugins: { [name: string]: any; } = {}
 
   static addPlugin<T>(prop: string, factory: TesseractPluginFactory<T>) {
+    const self = this
     Object.defineProperty(this.prototype, prop, {
       get(): T {
-        if (!this.plugins[prop]) {
-          this.plugins[prop] = factory(this)
+        if (!self.plugins[prop]) {
+          self.plugins[prop] = factory(this)
         }
-        return this.plugins[prop]
+        return self.plugins[prop]
       }
     })
   }

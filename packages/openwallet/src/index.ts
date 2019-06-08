@@ -19,4 +19,4 @@ OpenWallet.addMethodPlugin(KeychainPlugin)
 
 TesseractModule.addPlugin('OpenWallet', () => new OpenWallet(OpenWallet.defaultProviders))
 
-export { OpenWallet, Network, IRequest, API, IKeychainRequest }
+export { OpenWallet, Network, IRequest, API, IKeychainRequest, TesseractModule }

@@ -64,3 +64,6 @@ typings/
 
 # rpt2 cache
 .rpt2_cache
+
+# dist folders
+dist

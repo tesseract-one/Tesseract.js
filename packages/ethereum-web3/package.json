@@ -33,6 +33,7 @@
   },
   "dependencies": {
     "@tesseract/core": "0.0.1",
+    "@tesseract/ethereum": "0.0.1",
     "@tesseract/openwallet": "0.0.1",
     "@tesseract/openwallet-ethereum": "0.0.1"
   },
