@@ -1,6 +1,6 @@
 {
   "version": "0.0.1",
-  "name": "@tesseract/ethereum",
+  "name": "@tesseractjs/ethereum",
   "description": "Tesseract SDK ethereum base classes",
   "homepage": "https://tesseract.one",
   "private": false,
@@ -23,14 +23,17 @@
   "module": "dist/ethereum.es.js",
   "browser": "dist/ethereum.umd.js",
   "types": "dist/types/index.d.ts",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "rollup -c",
     "dev": "rollup -wc",
     "lint": "tslint --project ."
   },
   "dependencies": {
-    "@tesseract/core": "0.0.1",
-    "@tesseract/openwallet": "0.0.1"
-  }
+    "@tesseractjs/core": "0.0.1",
+    "@tesseractjs/openwallet": "0.0.1"
+  },
+  "gitHead": "a63dea263fcd7284a210dbad8cf3c66083344ea4"
 }

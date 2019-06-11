@@ -1,6 +1,6 @@
 
 import { Web3 } from './web3'
-import { Ethereum } from '@tesseract/ethereum'
+import { Ethereum } from '@tesseractjs/ethereum'
 import { Web3ModuleOptions } from 'web3-core'
 import { HttpProviderOptions, WebsocketProviderOptions } from 'web3-providers'
 
@@ -9,7 +9,7 @@ import {
   Web3NativeProvider, Web3OpenWalletProvider
 } from './providers'
 
-declare module '@tesseract/ethereum' {
+declare module '@tesseractjs/ethereum' {
   interface Ethereum {
     Web3(
       rpcUrl: string,

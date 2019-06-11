@@ -1,6 +1,6 @@
 {
   "version": "0.0.1",
-  "name": "@tesseract/meta",
+  "name": "@tesseractjs/meta",
   "description": "Tesseract metapackage",
   "homepage": "https://tesseract.one",
   "private": true,

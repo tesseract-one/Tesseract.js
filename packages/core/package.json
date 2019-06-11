@@ -1,6 +1,6 @@
 {
   "version": "0.0.1",
-  "name": "@tesseract/core",
+  "name": "@tesseractjs/core",
   "description": "Tesseract SDK core classes",
   "homepage": "https://tesseract.one",
   "private": false,
@@ -22,10 +22,13 @@
   "module": "dist/core.es.js",
   "browser": "dist/core.umd.js",
   "types": "dist/types/index.d.ts",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "rollup -c",
     "dev": "rollup -wc",
     "lint": "tslint --project ."
-  }
+  },
+  "gitHead": "a63dea263fcd7284a210dbad8cf3c66083344ea4"
 }

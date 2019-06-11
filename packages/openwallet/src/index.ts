@@ -1,12 +1,12 @@
 
 import { OpenWallet } from './openwallet'
-import { TesseractModule } from '@tesseract/core'
+import { TesseractModule } from '@tesseractjs/core'
 import { NativeProvider } from './native'
 import { CallbackURLProvider } from './url'
 import { Network, IRequest, API } from './types'
 import { KeychainPlugin, IKeychainRequest } from './keychain'
 
-declare module '@tesseract/core' {
+declare module '@tesseractjs/core' {
   interface TesseractModule {
     OpenWallet: OpenWallet
   }

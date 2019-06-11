@@ -57,11 +57,11 @@ const config = [
 ];
 
 export const packageNames = {
-    "@tesseract/core": "Tesseract",
-    "@tesseract/openwallet": "TesseractOpenWallet",
-    "@tesseract/ethereum": "TesseractEthereum",
-    "@tesseract/openwallet-ethereum": "TesseractOpenWalletEthereum",
-    "@tesseract/ethereum-web3": "TesseractEthereumWeb3"
+    "@tesseractjs/core": "Tesseract",
+    "@tesseractjs/openwallet": "TesseractOpenWallet",
+    "@tesseractjs/ethereum": "TesseractEthereum",
+    "@tesseractjs/openwallet-ethereum": "TesseractOpenWalletEthereum",
+    "@tesseractjs/ethereum-web3": "TesseractEthereumWeb3"
 }
 
 /**

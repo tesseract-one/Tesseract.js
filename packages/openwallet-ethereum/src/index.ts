@@ -1,4 +1,4 @@
-import { Network, API, OpenWallet } from '@tesseract/openwallet'
+import { Network, API, OpenWallet } from '@tesseractjs/openwallet'
 import { 
   HexString, Quantity, IAccountRequest, ISignTxRequest,
   Transaction, ISignDataRequest, ISignTypedDataRequest
@@ -51,7 +51,7 @@ export class Ethereum {
   }
 }
 
-declare module '@tesseract/openwallet' { 
+declare module '@tesseractjs/openwallet' { 
   namespace Network {
     export var Ethereum: Network
   }
@@ -59,7 +59,7 @@ declare module '@tesseract/openwallet' {
 
 Network.Ethereum = new Network("ETHEREUM")
 
-declare module '@tesseract/openwallet' {
+declare module '@tesseractjs/openwallet' {
   interface OpenWallet {
     Ethereum: Ethereum
   }

@@ -1,6 +1,6 @@
 {
   "version": "0.0.1",
-  "name": "@tesseract/ethereum-web3",
+  "name": "@tesseractjs/ethereum-web3",
   "description": "Tesseract SDK Ethereum Web3 connector",
   "homepage": "https://tesseract.one",
   "private": false,
@@ -23,7 +23,9 @@
   "module": "dist/ethereum-web3.es.js",
   "browser": "dist/ethereum-web3.umd.js",
   "types": "dist/types/index.d.ts",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "rollup -c",
     "dev": "rollup -wc",
@@ -33,12 +35,13 @@
     "web3": "^1.0.0-beta.55"
   },
   "dependencies": {
-    "@tesseract/core": "0.0.1",
-    "@tesseract/ethereum": "0.0.1",
-    "@tesseract/openwallet": "0.0.1",
-    "@tesseract/openwallet-ethereum": "0.0.1"
+    "@tesseractjs/core": "0.0.1",
+    "@tesseractjs/ethereum": "0.0.1",
+    "@tesseractjs/openwallet": "0.0.1",
+    "@tesseractjs/openwallet-ethereum": "0.0.1"
   },
   "devDependencies": {
     "web3": "^1.0.0-beta.55"
-  }
+  },
+  "gitHead": "a63dea263fcd7284a210dbad8cf3c66083344ea4"
 }

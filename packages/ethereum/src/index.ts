@@ -1,5 +1,5 @@
-import { OpenWallet } from '@tesseract/openwallet'
-import { TesseractModule } from '@tesseract/core'
+import { OpenWallet } from '@tesseractjs/openwallet'
+import { TesseractModule } from '@tesseractjs/core'
 
 export interface EthereumPluginFactory<T> {
   (instance: Ethereum): T
@@ -35,7 +35,7 @@ export class Ethereum {
   }
 }
 
-declare module '@tesseract/core' {
+declare module '@tesseractjs/core' {
   interface TesseractModule {
     Ethereum: Ethereum
   }

@@ -1,6 +1,6 @@
 
-import { IKeychainRequest } from  '@tesseract/openwallet'
-import { HexString, Quantity, Transaction } from '@tesseract/ethereum'
+import { IKeychainRequest } from  '@tesseractjs/openwallet'
+import { HexString, Quantity, Transaction } from '@tesseractjs/ethereum'
 
 
 export interface IAccountRequest extends IKeychainRequest<"get_account", HexString> {

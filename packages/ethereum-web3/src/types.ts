@@ -1,4 +1,4 @@
-import { OpenWallet } from '@tesseract/openwallet'
+import { OpenWallet } from '@tesseractjs/openwallet'
 import { AbstractMethod } from 'web3-core-method'
 import { AbstractWeb3Module } from 'web3-core'
 import { WebsocketProviderOptions, HttpProviderOptions } from 'web3-providers'

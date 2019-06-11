@@ -1,6 +1,6 @@
 {
   "version": "0.0.1",
-  "name": "@tesseract/openwallet-ethereum",
+  "name": "@tesseractjs/openwallet-ethereum",
   "description": "Tesseract SDK OpenWallet Ethereum extensions",
   "homepage": "https://tesseract.one",
   "private": false,
@@ -22,14 +22,17 @@
   "module": "dist/openwallet-ethereum.es.js",
   "browser": "dist/openwallet-ethereum.umd.js",
   "types": "dist/types/index.d.ts",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "rollup -c",
     "dev": "rollup -wc",
     "lint": "tslint --project ."
   },
   "dependencies": {
-    "@tesseract/ethereum": "0.0.1",
-    "@tesseract/openwallet": "0.0.1"
-  }
+    "@tesseractjs/ethereum": "0.0.1",
+    "@tesseractjs/openwallet": "0.0.1"
+  },
+  "gitHead": "a63dea263fcd7284a210dbad8cf3c66083344ea4"
 }
