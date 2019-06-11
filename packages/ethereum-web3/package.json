@@ -31,6 +31,9 @@
     "dev": "rollup -wc",
     "lint": "tslint --project ."
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "peerDependencies": {
     "web3": "^1.0.0-beta.55"
   },
@@ -43,5 +46,5 @@
   "devDependencies": {
     "web3": "^1.0.0-beta.55"
   },
-  "gitHead": "a63dea263fcd7284a210dbad8cf3c66083344ea4"
+  "gitHead": "4eb3ea37fd0069f2fd39b78bfa879969cd224e17"
 }
