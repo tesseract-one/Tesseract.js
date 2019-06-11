@@ -1,19 +1,19 @@
 {
   "version": "0.0.1",
   "name": "@tesseract/openwallet-ethereum",
-  "description": "Browser plugin version of Tesseract Wallet",
+  "description": "Tesseract SDK OpenWallet Ethereum extensions",
   "homepage": "https://tesseract.one",
   "private": false,
   "license": "Apache-2.0",
   "author": "Tesseract Systems, Inc.",
   "keywords": [
-    "web3",
-    "wallet",
-    "plugin"
+    "ethereum",
+    "openwallet",
+    "tesseract"
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/tesseract-one/Tesseract.js/tree/main/packages/core"
+    "url": "https://github.com/tesseract-one/Tesseract.js/tree/master/packages/openwallet-ethereum"
   },
   "bugs": {
     "url": "https://github.com/tesseract-one/Tesseract.js/issues"

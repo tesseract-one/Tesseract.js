@@ -1,19 +1,20 @@
 {
   "version": "0.0.1",
   "name": "@tesseract/ethereum",
-  "description": "Browser plugin version of Tesseract Wallet",
+  "description": "Tesseract SDK ethereum base classes",
   "homepage": "https://tesseract.one",
   "private": false,
   "license": "Apache-2.0",
   "author": "Tesseract Systems, Inc.",
   "keywords": [
+    "tesseract",
     "web3",
-    "wallet",
-    "plugin"
+    "ethereum",
+    "openwallet"
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/tesseract-one/Tesseract.js/tree/main/packages/core"
+    "url": "https://github.com/tesseract-one/Tesseract.js/tree/master/packages/ethereum"
   },
   "bugs": {
     "url": "https://github.com/tesseract-one/Tesseract.js/issues"
