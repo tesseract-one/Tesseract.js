@@ -12,7 +12,7 @@ export class Ethereum {
   }
 
   isKeychainInstalled(): Promise<boolean> {
-    return this.openWallet.hasApi(API.Keychain, Network.Ethereum.toString())
+    return this.openWallet.hasApi(API.Keychain, Network.Ethereum.id)
   }
 
   accounts(networkId: number): Promise<Array<HexString>> {

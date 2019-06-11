@@ -4,7 +4,13 @@
     Keychain = "KEYCHAIN"
   }
 
-  export class Network extends String {}
+  export class Network {
+    id: string
+
+    constructor(id: string) {
+      this.id = id
+    }
+  }
 
   export enum Version {
     v1 = "1.0"
