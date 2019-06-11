@@ -1,6 +1,6 @@
 import { IProvider, IRequest, Version } from './types'
 
-const iOS = !!navigator.platform && /iPad|iPhone|iPod/.test(navigator.platform)
+const iOS = !!navigator && !!navigator.platform && /iPad|iPhone|iPod/.test(navigator.platform)
 
 var _INSTANCE: CallbackURLProvider | undefined = undefined
 
