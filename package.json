@@ -3,7 +3,7 @@
   "name": "@tesseract/meta",
   "description": "Tesseract metapackage",
   "homepage": "https://tesseract.one",
-  "private": false,
+  "private": true,
   "license": "Apache-2.0",
   "author": "Tesseract Systems, Inc.",
   "keywords": [
@@ -24,7 +24,7 @@
     "bootstrap": "lerna bootstrap",
     "lint": "lerna run tslint",
     "build": "lerna run build",
-    "publish": "npm run bootstrap && lerna publich --skip-git"
+    "publish": "npm run bootstrap && lerna publish --skip-git"
   },
   "devDependencies": {
     "lerna": "^3.14.1",
