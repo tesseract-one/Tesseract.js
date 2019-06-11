@@ -1,6 +1,6 @@
 
 import { OpenWallet } from './openwallet'
-import { TesseractModule } from '@tesseractjs/core'
+import { TesseractModule, Tesseract } from '@tesseractjs/core'
 import { NativeProvider } from './native'
 import { CallbackURLProvider } from './url'
 import { Network, IRequest, API } from './types'
@@ -19,4 +19,4 @@ OpenWallet.addMethodPlugin(KeychainPlugin)
 
 TesseractModule.addPlugin('OpenWallet', () => new OpenWallet(OpenWallet.defaultProviders))
 
-export { OpenWallet, Network, IRequest, API, IKeychainRequest, TesseractModule }
+export { OpenWallet, Network, IRequest, API, IKeychainRequest, Tesseract, TesseractModule }

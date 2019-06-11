@@ -32,3 +32,4 @@ Web3.defaultProviders.push(Web3FallbackProvider)
 
 
 export { Web3, Web3FallbackProvider, Web3NativeOpenWalletProvider, Web3NativeProvider, Web3OpenWalletProvider, Ethereum }
+export { Tesseract } from '@tesseractjs/core'

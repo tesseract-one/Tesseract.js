@@ -24,7 +24,7 @@
     "bootstrap": "lerna bootstrap",
     "lint": "lerna run tslint",
     "build": "lerna run build",
-    "release": "npm run bootstrap && lerna publish --skip-git"
+    "release": "npm run bootstrap && npm run build && lerna publish --skip-git"
   },
   "devDependencies": {
     "lerna": "^3.14.1",

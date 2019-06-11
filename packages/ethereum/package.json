@@ -32,8 +32,8 @@
     "lint": "tslint --project ."
   },
   "dependencies": {
-    "@tesseractjs/core": "0.0.1",
-    "@tesseractjs/openwallet": "0.0.1"
+    "@tesseractjs/core": "^0.0.1",
+    "@tesseractjs/openwallet": "^0.0.1"
   },
   "publishConfig": {
     "access": "public"
