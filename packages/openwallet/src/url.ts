@@ -55,7 +55,8 @@ export class CallbackURLProvider implements IProvider {
     const hash = window.location.hash
     if (!hash.startsWith("#openwallet-")) { return }
 
-    window.location.hash = ''
+    window.history.replaceState({}, document.title, this.currentUrl())
+
     var response: OWResponse
     try {
       const base64 = decodeURIComponent(hash.substr("#openwallet-".length))
@@ -99,8 +100,21 @@ export class CallbackURLProvider implements IProvider {
     this.timeouts.push([message.id, Date.now()])
     const data = encodeURIComponent(btoa(JSON.stringify(message)))
     const api = type.toLowerCase().replace(/_/g, '-')
-    const callback = window.location.href.split("#")[0]
-    window.open(`${api}://?message=${data}&callback=${callback}`, '_blank')
+    this.open(`${api}://?message=${data}&callback=${this.currentUrl()}`)
+  }
+
+  private open(url: string) {
+    const a = document.createElement('a')
+    a.setAttribute('target', '_blank')
+    a.setAttribute('href', url)
+    a.setAttribute('style', 'display: none;')
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
+  }
+
+  private currentUrl() {
+    return window.location.href.split("#")[0]
   }
 
   start() {
