@@ -104,13 +104,8 @@ export class CallbackURLProvider implements IProvider {
   }
 
   private open(url: string) {
-    const a = document.createElement('a')
-    a.setAttribute('target', '_blank')
-    a.setAttribute('href', url)
-    a.setAttribute('style', 'display: none;')
-    document.body.appendChild(a)
-    a.click()
-    document.body.removeChild(a)
+    // It works fine if we have Open Wallet installed.
+    window.location.href = url;
   }
 
   private currentUrl() {
