@@ -27,11 +27,13 @@ export class CallbackURLProvider implements IProvider {
   isNative: boolean
 
   private static defaultTimeout: number = 300
+  private static popupWaitingTimeout: number = 5
 
   private requestId: number
   private isWorking: boolean
   private callbacks: { [id: number]: (error?: OWError, result?: any) => void }
   private timeouts: Array<[number, number]>
+  private sendTimeouts: Array<[number, number]>
   private _version: string
 
   public static instance(): CallbackURLProvider {
@@ -48,6 +50,7 @@ export class CallbackURLProvider implements IProvider {
     this._version = Version.v1
     this.callbacks = {}
     this.timeouts = []
+    this.sendTimeouts = []
     this.requestId = 0
   }
 
@@ -77,16 +80,30 @@ export class CallbackURLProvider implements IProvider {
     const callback = this.callbacks[response.id]
     delete this.callbacks[response.id]
     this.timeouts = this.timeouts.filter(val => val[0] !== response.id)
+    this.sendTimeouts = this.sendTimeouts.filter(val => val[0] !== response.id)
     callback(response.error, response.response)
   }
 
   private checkTimeout() {
     const time = Date.now() - CallbackURLProvider.defaultTimeout*1000
     const outdated = this.timeouts.filter(val => val[1] <= time)
+    this.timeouts = this.timeouts.filter(val => val[1] > time)
     
     for (const [id] of outdated) {
       this.response({ id, version: this._version, error: { type: "TIMEOUT", message: "Request is timed out" } })
     }
+
+    const sendTime = Date.now() - CallbackURLProvider.popupWaitingTimeout*1000
+    if (!document.hidden) {
+      const sendFailed = this.sendTimeouts.filter(val => val[1] <= sendTime)
+      for (const [id] of sendFailed) {
+        this.response({
+          id, version: this._version,
+          error: { type: "NOT_INSTALLED", message: "OpenWallet is not installed." }
+        })
+      }
+    }
+    this.sendTimeouts = this.sendTimeouts.filter(val => val[1] > sendTime)
   }
 
   private sendMessage(type: string, message: OWRequest) {
@@ -98,14 +115,10 @@ export class CallbackURLProvider implements IProvider {
     }
 
     this.timeouts.push([message.id, Date.now()])
+    this.sendTimeouts.push([message.id, Date.now()])
     const data = encodeURIComponent(btoa(JSON.stringify(message)))
     const api = type.toLowerCase().replace(/_/g, '-')
-    this.open(`${api}://?message=${data}&callback=${this.currentUrl()}`)
-  }
-
-  private open(url: string) {
-    // It works fine if we have Open Wallet installed.
-    window.location.href = url;
+    window.location.href = `${api}://?message=${data}&callback=${this.currentUrl()}`
   }
 
   private currentUrl() {
@@ -115,8 +128,8 @@ export class CallbackURLProvider implements IProvider {
   start() {
     if (!this.isWorking) {
       this.isWorking = true
-      window.onhashchange = this.onhashchange.bind(this)
-      setInterval(this.checkTimeout.bind(this), 1000)
+      window.addEventListener('hashchange', this.onhashchange.bind(this))
+      setInterval(this.checkTimeout.bind(this), 500)
     }
   }
 
