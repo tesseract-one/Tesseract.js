@@ -45,6 +45,5 @@
   },
   "devDependencies": {
     "web3": "^1.0.0-beta.55"
-  },
-  "gitHead": "4eb3ea37fd0069f2fd39b78bfa879969cd224e17"
+  }
 }
