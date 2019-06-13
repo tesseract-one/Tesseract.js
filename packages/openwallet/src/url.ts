@@ -22,6 +22,13 @@ type OWRequest = {
   request: any
 }
 
+type QueueMessage = {
+  type: string,
+  message: OWRequest,
+  time: number,
+  callback: (error?: OWError, result?: any) => void
+}
+
 export class CallbackURLProvider implements IProvider {
   isActive: boolean
   isNative: boolean
@@ -31,10 +38,11 @@ export class CallbackURLProvider implements IProvider {
 
   private requestId: number
   private isWorking: boolean
-  private callbacks: { [id: number]: (error?: OWError, result?: any) => void }
-  private timeouts: Array<[number, number]>
-  private sendTimeouts: Array<[number, number]>
-  private _version: string
+
+  private sendTimeout?: any
+  private messageQueue: Array<QueueMessage>
+  
+  private _version: string = Version.v1
 
   public static instance(): CallbackURLProvider {
     if (!_INSTANCE) {
@@ -47,14 +55,11 @@ export class CallbackURLProvider implements IProvider {
     this.isNative = false
     this.isActive = iOS
     this.isWorking = false
-    this._version = Version.v1
-    this.callbacks = {}
-    this.timeouts = []
-    this.sendTimeouts = []
+    this.messageQueue = []
     this.requestId = 0
   }
 
-  private onhashchange() {
+  private onHashChange() {
     const hash = window.location.hash
     if (!hash.startsWith("#openwallet-")) { return }
 
@@ -66,58 +71,75 @@ export class CallbackURLProvider implements IProvider {
       response = JSON.parse(atob(base64))
     } catch(error) {
       console.error("Response parsing error: ", error)
+      this.sendMessage()
       return
     }
     this.response(response)
   }
 
   private response(response: OWResponse) {
-    if (response.id === undefined || this.callbacks[response.id] === undefined ) {
+    if (this.messageQueue.length === 0) {
       console.error("Unhandled response:", response)
       return
     }
-
-    const callback = this.callbacks[response.id]
-    delete this.callbacks[response.id]
-    this.timeouts = this.timeouts.filter(val => val[0] !== response.id)
-    this.sendTimeouts = this.sendTimeouts.filter(val => val[0] !== response.id)
-    callback(response.error, response.response)
-  }
-
-  private checkTimeout() {
-    const time = Date.now() - CallbackURLProvider.defaultTimeout*1000
-    const outdated = this.timeouts.filter(val => val[1] <= time)
-    this.timeouts = this.timeouts.filter(val => val[1] > time)
-    
-    for (const [id] of outdated) {
-      this.response({ id, version: this._version, error: { type: "TIMEOUT", message: "Request is timed out" } })
-    }
-
-    const sendTime = Date.now() - CallbackURLProvider.popupWaitingTimeout*1000
-    if (!document.hidden) {
-      const sendFailed = this.sendTimeouts.filter(val => val[1] <= sendTime)
-      for (const [id] of sendFailed) {
-        this.response({
-          id, version: this._version,
-          error: { type: "NOT_INSTALLED", message: "OpenWallet is not installed." }
-        })
+    if (this.messageQueue[0].message.id !== response.id ) {
+      console.error("Wrong response:", response, "waiting for:", this.messageQueue[0].message.id)
+      const failed = this.messageQueue.filter(m => m.message.id < response.id)
+      this.messageQueue = this.messageQueue.filter(m => m.message.id >= response.id)
+      for (const message of failed) {
+        message.callback({type: 'WRONG_MESSAGE_ID', message: `Got wrong message id: ${response.id}`})
+      }
+      if (this.messageQueue.length === 0 || this.messageQueue[0]!.message.id !== response.id) {
+        this.sendMessage()
+        return
       }
     }
-    this.sendTimeouts = this.sendTimeouts.filter(val => val[1] > sendTime)
+
+    const queueMessage = this.messageQueue.shift()!
+
+    if (this.sendTimeout) {
+      clearTimeout(this.sendTimeout)
+      this.sendTimeout = undefined
+    }
+    
+    queueMessage.callback(response.error, response.response)
+
+    this.sendMessage()
   }
 
-  private sendMessage(type: string, message: OWRequest) {
-    if (type === "OPENWALLET_HAS_API") {
-      setTimeout(() => { 
-        this.response({ id: message.id, version: message.version, response: true })
-      }, 0)
-      return
+  private onVisibilityChange() {
+    if (document.hidden && this.sendTimeout) {
+      clearTimeout(this.sendTimeout)
+      this.sendTimeout = undefined
     }
+  }
 
-    this.timeouts.push([message.id, Date.now()])
-    this.sendTimeouts.push([message.id, Date.now()])
-    const data = encodeURIComponent(btoa(JSON.stringify(message)))
-    const api = type.toLowerCase().replace(/_/g, '-')
+  private sendTimeoutHandler() {
+    this.sendTimeout = undefined
+    const message = this.messageQueue.shift()!
+
+    message.callback({type: 'NOT_INSTALLED', message: 'OpenWallet is not installed'})
+  }
+
+  private timeoutHandler() {
+    const time = Date.now() - CallbackURLProvider.defaultTimeout*1000
+    const timedOut = this.messageQueue.filter(m => m.time <= time)
+    this.messageQueue = this.messageQueue.filter(m => m.time > time)
+
+    for (const m of timedOut) {
+      m.callback({type: 'TIMEOUT', message: 'Request is timed out'})
+    }
+  }
+
+  private sendMessage() {
+    if (this.messageQueue.length === 0) { return }
+    const message = this.messageQueue[0]!
+
+    const data = encodeURIComponent(btoa(JSON.stringify(message.message)))
+    const api = message.type.toLowerCase().replace(/_/g, '-')
+
+    this.sendTimeout = setTimeout(this.sendTimeoutHandler.bind(this), CallbackURLProvider.popupWaitingTimeout*1000)
+
     window.location.href = `${api}://?message=${data}&callback=${this.currentUrl()}`
   }
 
@@ -128,8 +150,9 @@ export class CallbackURLProvider implements IProvider {
   start() {
     if (!this.isWorking) {
       this.isWorking = true
-      window.addEventListener('hashchange', this.onhashchange.bind(this))
-      setInterval(this.checkTimeout.bind(this), 500)
+      window.addEventListener('hashchange', this.onHashChange.bind(this), false)
+      document.addEventListener('visibilitychange', this.onVisibilityChange.bind(this), false)
+      setInterval(this.timeoutHandler.bind(this), 1000)
     }
   }
 
@@ -140,19 +163,32 @@ export class CallbackURLProvider implements IProvider {
   send<Response, Request extends IRequest<string, any, Response>>(request: Request): Promise<Response> {
     const id = ++this.requestId;
     return new Promise((resolve, reject) => {
-      const req: OWRequest = {
-        id,
-        version: this._version,
-        request: request.request
+      if (request.type === 'OPENWALLET_HAS_API') {
+        resolve(<any>true)
+        return
       }
-      this.callbacks[id] = (error, result) => {
-        if (error) {
-          reject(error)
-        } else {
-          resolve(result)
+
+      const message: QueueMessage = {
+        type: request.type,
+        time: Date.now(),
+        message: {
+          id,
+          version: this._version,
+          request: request.request
+        },
+        callback(error, result) {
+          if (error) {
+            reject(error)
+          } else {
+            resolve(result)
+          }
         }
       }
-      this.sendMessage(request.type, req)
+
+      this.messageQueue.push(message)
+      if (this.messageQueue.length === 1) {
+        this.sendMessage()
+      }
     })
   }
 }
