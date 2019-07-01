@@ -67,7 +67,14 @@ export class CallbackURLProvider implements IProvider {
 
     var response: OWResponse
     try {
-      const base64 = decodeURIComponent(hash.substr("#openwallet-".length))
+      // base64url encoding with sttripped padding https://tools.ietf.org/html/rfc4648#page-7
+      let base64 = hash
+        .substr("#openwallet-".length)
+        .replace(/-/g, '+')
+        .replace(/_/g, '/')
+      if (base64.length % 4 > 0) {
+        base64 += '='.repeat(4 - base64.length % 4)
+      }
       response = JSON.parse(atob(base64))
     } catch(error) {
       console.error("Response parsing error: ", error)
@@ -135,7 +142,11 @@ export class CallbackURLProvider implements IProvider {
     if (this.messageQueue.length === 0) { return }
     const message = this.messageQueue[0]!
 
-    const data = encodeURIComponent(btoa(JSON.stringify(message.message)))
+    // base64url encoding with sttripped padding https://tools.ietf.org/html/rfc4648#page-7
+    const data = btoa(JSON.stringify(message.message))
+      .replace(/=+$/, '')
+      .replace(/\+/g, '-')
+      .replace(/\//g, '_')
     const api = message.type.toLowerCase().replace(/_/g, '-')
 
     this.sendTimeout = setTimeout(this.sendTimeoutHandler.bind(this), CallbackURLProvider.popupWaitingTimeout*1000)
