@@ -2,7 +2,7 @@
 [![GitHub license](https://img.shields.io/badge/license-Apache%202.0-lightgrey.svg)](https://raw.githubusercontent.com/tesseract-one/Tesseract.js/master/LICENSE)
 [![Build Status](https://travis-ci.com/tesseract-one/Tesseract.js.svg?branch=master)](https://travis-ci.com/tesseract-one/Tesseract.js)
 [![GitHub release](https://img.shields.io/github/release/tesseract-one/Tesseract.js.svg)](https://github.com/tesseract-one/Tesseract.js/releases)
-[![npm version](https://img.shields.io/npm/v/@tesseractjs/core.svg)](https://www.npmjs.com/package/@tesseractjs/core)
+[![npm version](https://img.shields.io/npm/v/%40tesseractjs/core.svg)](https://www.npmjs.com/package/%40tesseractjs/core)
 
 ## Getting started
 
