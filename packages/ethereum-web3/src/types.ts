@@ -1,24 +1,40 @@
 import { OpenWallet } from '@tesseractjs/openwallet'
-import { AbstractMethod } from 'web3-core-method'
-import { AbstractWeb3Module } from 'web3-core'
-import { WebsocketProviderOptions, HttpProviderOptions } from 'web3-providers'
+import { Provider, JsonRPCRequest, JsonRPCResponse, Callback, HttpProvider, WebsocketProvider } from 'web3/providers'
+
+export interface HttpProviderOptions {
+  keepAlive?: boolean
+  timeout?: number
+  headers?: { [key: string]: string }
+}
+
+export interface WebsocketProviderOptions {
+  timeout?: number
+  headers?: { [key: string]: string }
+  protocol?: string
+  clientConfig?: string
+}
+
+export type HttpProviderConstructor = new (options?: HttpProviderOptions) => HttpProvider
+export type WebsocketProviderConstructor = new (options?: WebsocketProviderOptions) => WebsocketProvider
 
 export interface IWeb3Provider {
-  fallback: boolean
+  hasClientWallet: boolean
 
-  host: string;
+  supportsSubscriptions: boolean
 
-  supportsSubscriptions(): boolean;
+  connected: boolean
 
-  send(method: string, parameters: any[]): Promise<any>;
+  send(payload: JsonRPCRequest, callback: Callback<JsonRPCResponse>): void;
 
-  sendBatch(methods: AbstractMethod[], moduleInstance: AbstractWeb3Module): Promise<any[]>;
+  on(type: string, callback: (message?: any) => any): void;
+  removeListener(type: string, callback: (message?: any) => any): void;
+  reset(): void
 }
 
 export type Web3ProviderOptions = {
-  rpcUrl: string,
-  openWallet: OpenWallet,
-  options?: HttpProviderOptions | WebsocketProviderOptions
+  openWallet: OpenWallet
+  netId: number
+  provider?: Provider
 }
 
 export interface IWeb3ProviderFactory {

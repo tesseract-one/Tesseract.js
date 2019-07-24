@@ -1,7 +1,17 @@
-
 import { IKeychainRequest } from  '@tesseractjs/openwallet'
-import { HexString, Quantity, Transaction } from '@tesseractjs/ethereum'
 
+export type Quantity = string
+export type HexString = string
+
+export type Transaction = {
+  nonce: Quantity
+  from: HexString
+  to?: HexString
+  gas: Quantity
+  gasPrice: Quantity
+  value: Quantity
+  data: HexString
+}
 
 export interface IAccountRequest extends IKeychainRequest<"get_account", HexString> {
   networkId: number
@@ -30,5 +40,3 @@ export interface ISignTypedDataRequest extends IKeychainRequest<"sign_typed_data
   account: HexString
   data: object
 }
-
-export { HexString, Quantity, Transaction }

@@ -1,43 +1,54 @@
-import { IWeb3Provider } from '../types'
-import { HttpProvider, IpcProvider, WebsocketProvider, Web3EthereumProvider, CustomProvider } from 'web3-providers'
+import { IWeb3Provider, Web3ProviderOptions } from '../types'
+import { Provider } from 'web3/providers'
+import { getNetId } from '../rpc'
 
-type AnyProvider = (HttpProvider | IpcProvider | WebsocketProvider | Web3EthereumProvider | CustomProvider) & IWeb3Provider
+type AnyProvider = Provider & IWeb3Provider
 
 export class Web3NativeProvider implements ProxyHandler<AnyProvider> {
 
   public has(target: AnyProvider, p: PropertyKey): boolean {
     switch (p) {
-      case 'fallback': return true
+      case 'hasClientWallet': return true
+      case 'supportsSubscriptions': return true
       default: return Reflect.has(target, p)
     }
   }
 
   public get(target: AnyProvider, p: PropertyKey, receiver: any): any {
     switch (p) {
-      case 'fallback': return false
+      case 'hasClientWallet': return true
+      case 'supportsSubscriptions': return Reflect.get(target, 'on', receiver) !== undefined
       default: return Reflect.get(target, p, receiver)
     }
   }
 
   public set(target: AnyProvider, p: PropertyKey, value: any, receiver: any): boolean {
     switch (p) {
-      case 'fallback': return false
+      case 'hasClientWallet': return false
+      case 'supportsSubscriptions': return false
       default: return Reflect.set(target, p, value, receiver)
     }
   }
 
   public ownKeys(target: AnyProvider): PropertyKey[] {
-    return Reflect.ownKeys(target).concat(['fallback'])
+    return Reflect.ownKeys(target).concat(['hasClientWallet', 'supportsSubscriptions'])
   }
 
-  public static create(): Promise<IWeb3Provider> {
+  private static async _fromProvider(provider: Provider, netId: number): Promise<IWeb3Provider> {
+    const rpcNetId = await getNetId(provider)
+    if (netId !== rpcNetId) { throw new Error('Provider has different netId') }
+    return new Proxy(provider as AnyProvider, new Web3NativeProvider())
+  }
+
+  public static async create({ netId }: Web3ProviderOptions): Promise<IWeb3Provider> {
+    if (!window) { throw new Error('Will work only in browser') }
     if ((<any>window).ethereum) {
-      return (<Promise<void>>(<any>window).ethereum.enable())
-        .then(() => new Proxy((<any>window).ethereum, new Web3NativeProvider()))
+      await (<any>window).ethereum.enable()
+      return await this._fromProvider((<any>window).ethereum, netId)
     }
     if ((<any>window).web3 && (<any>window).web3.currentProvider) {
-      return Promise.resolve(new Proxy((<any>window).web3.currentProvider, new Web3NativeProvider()))
+      return await this._fromProvider((<any>window).web3.currentProvider, netId)
     }
-    return Promise.reject(new Error("Can't create provider"))
+    throw new Error("Can't create provider")
   }
 }

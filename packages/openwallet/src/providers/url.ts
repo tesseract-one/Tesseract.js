@@ -1,4 +1,4 @@
-import { IProvider, IRequest, Version } from './types'
+import { IProvider, IRequest, ISubscribeRequest, IUnsubscribeRequest, ISubscribeResponseMessage, Version, API } from '../types'
 
 const iOS = !!navigator && !!navigator.platform && /iPad|iPhone|iPod/.test(navigator.platform)
 
@@ -31,7 +31,7 @@ type QueueMessage = {
 
 export class CallbackURLProvider implements IProvider {
   isActive: boolean
-  isNative: boolean
+  supportsSubscriptions: boolean
 
   private static defaultTimeout: number = 300
   private static popupWaitingTimeout: number = 5
@@ -43,6 +43,7 @@ export class CallbackURLProvider implements IProvider {
   private messageQueue: Array<QueueMessage>
   
   private _version: string = Version.v1
+  private unsupportedApis = [ API.Node ]
 
   public static instance(): CallbackURLProvider {
     if (!_INSTANCE) {
@@ -52,8 +53,8 @@ export class CallbackURLProvider implements IProvider {
   }
 
   private constructor() {
-    this.isNative = false
     this.isActive = iOS
+    this.supportsSubscriptions = false
     this.isWorking = false
     this.messageQueue = []
     this.requestId = 0
@@ -158,6 +159,14 @@ export class CallbackURLProvider implements IProvider {
     return window.location.href.split("#")[0]
   }
 
+  private hasApi(api: string, resolve: (has: any) => void, reject: (err: any) => void) {
+    if (this.unsupportedApis.find(uApi => api.startsWith('OPENWALLET_'+uApi))) {
+      reject({type: 'NOT_SUPPORTED', message: 'API is not supported'})
+    } else {
+      resolve(true)
+    }
+  }
+
   start() {
     if (!this.isWorking) {
       this.isWorking = true
@@ -171,11 +180,11 @@ export class CallbackURLProvider implements IProvider {
     return Promise.resolve(Version.v1)
   }
 
-  send<Response, Request extends IRequest<string, any, Response>>(request: Request): Promise<Response> {
+  send<Req extends IRequest<string, any, any>>(request: Req): Promise<NonNullable<Req['__TS_RESPONSE']>> {
     const id = ++this.requestId;
     return new Promise((resolve, reject) => {
       if (request.type === 'OPENWALLET_HAS_API') {
-        resolve(<any>true)
+        this.hasApi(request.request.type, resolve, reject)
         return
       }
 
@@ -201,5 +210,17 @@ export class CallbackURLProvider implements IProvider {
         this.sendMessage()
       }
     })
+  }
+
+  subscribe<Req extends ISubscribeRequest<string, any, ISubscribeResponseMessage>>(
+    _request: Req, _listener: (message: NonNullable<Req['request']['__TS_MESSAGE']>) => void
+  ): Promise<NonNullable<Req['__TS_RESPONSE']>> {
+    throw new Error('NOT_SUPPORTED')
+  }
+
+  unsubscribe<Req extends IUnsubscribeRequest<string, ISubscribeResponseMessage, any>>(
+    _request: Req
+  ): Promise<NonNullable<Req['__TS_RESPONSE']>> {
+    throw new Error('NOT_SUPPORTED')
   }
 }

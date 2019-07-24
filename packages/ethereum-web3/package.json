@@ -35,7 +35,7 @@
     "access": "public"
   },
   "peerDependencies": {
-    "web3": "^1.0.0-beta.55"
+    "web3": "^1.2.0"
   },
   "dependencies": {
     "@tesseractjs/core": "^0.0.1",
@@ -44,6 +44,7 @@
     "@tesseractjs/openwallet-ethereum": "^0.0.1"
   },
   "devDependencies": {
-    "web3": "^1.0.0-beta.55"
+    "web3": "^1.2.0",
+    "@types/web3": "^1.0.19"
   }
 }

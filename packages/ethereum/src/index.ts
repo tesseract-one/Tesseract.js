@@ -5,10 +5,6 @@ export interface EthereumPluginFactory<T> {
   (instance: Ethereum): T
 }
 
-export interface EthereumMethodPluginFactory {
-  (proto: Ethereum): void
-}
-
 export class Ethereum {
   public static plugins: { [name: string]: any; } = {}
 
@@ -18,20 +14,16 @@ export class Ethereum {
     this.openWallet = openWallet
   }
 
-  public static addPlugin<T>(prop: string, factory: EthereumPluginFactory<T>) {
+  public static addPlugin<P extends keyof Ethereum>(prop: P, factory: EthereumPluginFactory<Ethereum[P]>) {
     const self = this
     Object.defineProperty(this.prototype, prop, {
-      get(): T {
+      get(): Ethereum[P] {
         if (!self.plugins[prop]) {
           self.plugins[prop] = factory(this)
         }
         return self.plugins[prop]
       }
     })
-  }
-
-  public static addMethodPlugin(factory: EthereumMethodPluginFactory) {
-    factory(this.prototype)
   }
 }
 
@@ -46,4 +38,3 @@ TesseractModule.addPlugin("Ethereum", (tesseract) => {
 })
 
 export { Tesseract, TesseractModule }
-export * from './types'

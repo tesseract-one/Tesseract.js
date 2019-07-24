@@ -6,10 +6,10 @@ export interface TesseractPluginFactory<T> {
 export class TesseractModule {
   public static plugins: { [name: string]: any; } = {}
 
-  static addPlugin<T>(prop: string, factory: TesseractPluginFactory<T>) {
+  static addPlugin<P extends keyof TesseractModule>(prop: P, factory: TesseractPluginFactory<TesseractModule[P]>) {
     const self = this
     Object.defineProperty(this.prototype, prop, {
-      get(): T {
+      get(): TesseractModule[P] {
         if (!self.plugins[prop]) {
           self.plugins[prop] = factory(this)
         }

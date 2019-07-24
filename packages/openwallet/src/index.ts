@@ -1,10 +1,12 @@
 
 import { OpenWallet } from './openwallet'
 import { TesseractModule, Tesseract } from '@tesseractjs/core'
-import { NativeProvider } from './native'
-import { CallbackURLProvider } from './url'
-import { Network, IRequest, API } from './types'
-import { KeychainPlugin, IKeychainRequest } from './keychain'
+import { CallbackURLProvider, NativeProvider } from './providers'
+import { Network, IRequest, API, ISubscribeResponseMessage } from './types'
+import { 
+  KeychainPlugin, IKeychainRequest, NodePlugin,
+  INodeRequest, INodeSubscribeRequest, NodeSubscriptionType
+} from './api'
 
 declare module '@tesseractjs/core' {
   interface TesseractModule {
@@ -15,8 +17,14 @@ declare module '@tesseractjs/core' {
 OpenWallet.defaultProviders.push(new NativeProvider())
 OpenWallet.defaultProviders.push(CallbackURLProvider.instance())
 
-OpenWallet.addMethodPlugin(KeychainPlugin)
+OpenWallet.addPlugin('Keychain', openWallet => new KeychainPlugin(openWallet))
+OpenWallet.addPlugin('Node', openWallet => new NodePlugin(openWallet))
 
 TesseractModule.addPlugin('OpenWallet', () => new OpenWallet(OpenWallet.defaultProviders))
 
-export { OpenWallet, Network, IRequest, API, IKeychainRequest, Tesseract, TesseractModule }
+export {
+  OpenWallet, Network, IRequest, API, IKeychainRequest,
+  INodeRequest, INodeSubscribeRequest, Tesseract, TesseractModule,
+  ISubscribeResponseMessage, NodeSubscriptionType
+}
+export { Subscription, SubscriptionType } from './subscription'

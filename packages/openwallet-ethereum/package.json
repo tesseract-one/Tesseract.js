@@ -35,7 +35,6 @@
   },
   "dependencies": {
     "@tesseractjs/core": "^0.0.1",
-    "@tesseractjs/ethereum": "^0.0.1",
     "@tesseractjs/openwallet": "^0.0.1"
   }
 }
