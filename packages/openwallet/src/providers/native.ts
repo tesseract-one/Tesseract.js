@@ -49,7 +49,7 @@ export class NativeProvider implements IProvider {
     request: Req
   ): Promise<NonNullable<Req['__TS_RESPONSE']>> {
     const owReq: IRequest<string, Req['request'], NonNullable<Req['__TS_RESPONSE']>> = {
-      type: request.type + '_UNSUBSCRIBE',
+      type: request.type + '_SUBSCRIBE',
       request: request.request
     }
     const apiSubs = this.subscriptions[request.type] || {}

@@ -6,16 +6,17 @@ export interface INodeRequest<Response> {
   __TS_RESPONSE?: Response
 }
 
-export interface INodeSubscribeRequest<Message, Response, UMessage extends ISubscribeResponseMessage, UResponse>
-  extends ISubscribeRequestMessage<Message, UMessage, UResponse> {
+export interface INodeSubscribeRequest<Message, Response, UMessage, UResponse>
+  extends ISubscribeRequestMessage<Message, UMessage & ISubscribeResponseMessage, UResponse> {
   __TS_RESPONSE?: Response
+  __TS_NUMESSAGE?: UMessage
 }
 
-export type NodeSubscriptionType<Req extends INodeSubscribeRequest<any, any, ISubscribeResponseMessage, any>> =
+export type NodeSubscriptionType<Req extends INodeSubscribeRequest<any, any, any, any>> =
   Subscription<
     NonNullable<Req['__TS_MESSAGE']>,
     NonNullable<Req['__TS_RESPONSE']>,
-    NonNullable<Req['__TS_UMESSAGE']>,
+    NonNullable<Req['__TS_NUMESSAGE']>,
     NonNullable<Req['__TS_URESPONSE']>
   >
 
@@ -48,7 +49,7 @@ export class NodePlugin {
     return this.openWallet.send(owReq)
   }
 
-  subscribe<Req extends INodeSubscribeRequest<any, any, ISubscribeResponseMessage, any>>(
+  subscribe<Req extends INodeSubscribeRequest<any, any, any, any>>(
     net: Network, request: Req
   ): Promise<NodeSubscriptionType<Req>> {
     const owReq: ISubscribeRequest<string, Req, NonNullable<Req['__TS_RESPONSE']>> = {

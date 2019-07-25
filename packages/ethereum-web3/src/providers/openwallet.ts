@@ -2,8 +2,7 @@ import { IWeb3Provider, Web3ProviderOptions } from '../types'
 import { Ethereum } from '@tesseractjs/openwallet-ethereum'
 import { Provider, JsonRPCRequest, JsonRPCResponse, Callback, WebsocketProvider } from 'web3/providers'
 import { Jsonrpc, getChainId, promisifiedSend } from '../rpc'
-import { Subscription } from '@tesseractjs/openwallet';
-import { IEthereumNodeSubscribeRequest, IEthereumNodeRequest } from '@tesseractjs/openwallet-ethereum'
+import { IEthereumNodeSubscribeRequest, IEthereumNodeRequest, NodeSubscriptionType } from '@tesseractjs/openwallet-ethereum'
 
 const HANDLERS: {
   [method: string]: (
@@ -47,7 +46,7 @@ HANDLERS['eth_sendTransaction'] = function (eth, request, netId, chainId, provid
 class OpenWalletNodeProvider {
   private ethereum: Ethereum
   private netId: number
-  private subscriptions: { [key: string]: Subscription<any, any, any, any> } = {}
+  private subscriptions: { [key: string]: NodeSubscriptionType<IEthereumNodeSubscribeRequest<any[], any>> } = {}
   private subscribers: { [key: string]: Array<(message?: any) => void> } = {}
 
   constructor(ethereum: Ethereum, netId: number) {
@@ -86,7 +85,11 @@ class OpenWalletNodeProvider {
     } else if (payload.method.endsWith('_unsubscribe')) {
       const subscription = this.subscriptions[payload.params[0]]
       if (subscription) {
-        promise = subscription.unsubscribe([subscription.response])
+        promise = subscription.unsubscribe({
+          networkId: this.netId,
+          method: 'eth_unsubscribe',
+          params: [subscription.response]
+        })
       } else {
         promise = Promise.reject({ type: "NOT_FOUND", code: 32000 })
       }
@@ -121,7 +124,11 @@ class OpenWalletNodeProvider {
     this.subscribers = {}
     for (const id in this.subscriptions) {
       const subs = this.subscriptions[id]
-      subs.unsubscribe([subs.response])
+      subs.unsubscribe({
+        networkId: this.netId,
+        method: 'eth_unsubscribe',
+        params: [subs.response]
+      })
     }
     this.subscriptions = {}
   }

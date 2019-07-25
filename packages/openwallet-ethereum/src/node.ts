@@ -1,5 +1,5 @@
 
-import { INodeRequest, INodeSubscribeRequest, ISubscribeResponseMessage } from  '@tesseractjs/openwallet'
+import { INodeRequest, INodeSubscribeRequest } from  '@tesseractjs/openwallet'
 import { HexString, Quantity } from './keychain'
 
 export { NodeSubscriptionType } from '@tesseractjs/openwallet'
@@ -13,8 +13,10 @@ export interface IEthereumNodeRequest<Method extends string, Response> extends I
 
 export interface IEthereumNodeNetworksRequest extends IEthereumNodeRequest<'opw_supportedNetworks', Array<number>> {}
 
-export interface IEthereumNodeUnsubscribeMessage extends ISubscribeResponseMessage {
-  subscription: HexString
+export interface IEthereumNodeUnsubscribeMessage {
+  method: 'eth_unsubscribe'
+  networkId: number
+  params: [HexString]
 }
 
 export interface IEthereumNodeSubscriptionMessage<Result> {
