@@ -1,6 +1,7 @@
-import { IProvider, IRequest, ISubscribeRequest, IUnsubscribeRequest, ISubscribeResponseMessage, Version, API } from '../types'
+import { IProvider, IRequest, ISubscribeRequest, IUnsubscribeRequest, Version, API } from '../types'
 
-const iOS = !!navigator && !!navigator.platform && /iPad|iPhone|iPod/.test(navigator.platform)
+const isNodeJs = (typeof process === 'object') && (typeof process.versions.node !== 'undefined')
+const iOS = !isNodeJs && /iPad|iPhone|iPod/.test(window.navigator.platform)
 
 var _INSTANCE: CallbackURLProvider | undefined = undefined
 
@@ -160,7 +161,7 @@ export class CallbackURLProvider implements IProvider {
   }
 
   private hasApi(api: string, resolve: (has: any) => void, reject: (err: any) => void) {
-    if (this.unsupportedApis.find(uApi => api.startsWith('OPENWALLET_'+uApi))) {
+    if (this.unsupportedApis.find(uApi => api.startsWith(uApi))) {
       reject({type: 'NOT_SUPPORTED', message: 'API is not supported'})
     } else {
       resolve(true)
@@ -212,13 +213,13 @@ export class CallbackURLProvider implements IProvider {
     })
   }
 
-  subscribe<Req extends ISubscribeRequest<string, any, ISubscribeResponseMessage>>(
+  subscribe<Req extends ISubscribeRequest<string, any, any>>(
     _request: Req, _listener: (message: NonNullable<Req['request']['__TS_MESSAGE']>) => void
   ): Promise<NonNullable<Req['__TS_RESPONSE']>> {
     throw new Error('NOT_SUPPORTED')
   }
 
-  unsubscribe<Req extends IUnsubscribeRequest<string, ISubscribeResponseMessage, any>>(
+  unsubscribe<Req extends IUnsubscribeRequest<string, any, any>>(
     _request: Req
   ): Promise<NonNullable<Req['__TS_RESPONSE']>> {
     throw new Error('NOT_SUPPORTED')

@@ -13,7 +13,7 @@ export type Web3RpcUrlInfo = string | { url: string, options?: HttpProviderOptio
 
 interface Web3Constructor {
   config: {
-    rpcUrls: { [key: string]: Web3RpcUrlInfo }
+    rpcUrls: { [key: number]: Web3RpcUrlInfo }
     providers: Array<IWeb3ProviderFactory>
   }
   (

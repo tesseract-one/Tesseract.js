@@ -1,5 +1,8 @@
 import { OpenWallet } from '../openwallet'
-import { IRequest, Network, API, ISubscribeRequestMessage, ISubscribeResponseMessage, ISubscribeRequest } from '../types'
+import { 
+  IRequest, Network, API, ISubscribeRequestMessage,
+  IUnsubscribeRequestMessage, ISubscribeRequest
+} from '../types'
 import { Subscription } from '../subscription'
 
 export interface INodeRequest<Response> {
@@ -7,7 +10,7 @@ export interface INodeRequest<Response> {
 }
 
 export interface INodeSubscribeRequest<Message, Response, UMessage, UResponse>
-  extends ISubscribeRequestMessage<Message, UMessage & ISubscribeResponseMessage, UResponse> {
+  extends ISubscribeRequestMessage<Message, UMessage & IUnsubscribeRequestMessage, UResponse> {
   __TS_RESPONSE?: Response
   __TS_NUMESSAGE?: UMessage
 }

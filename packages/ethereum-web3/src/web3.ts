@@ -9,8 +9,8 @@ import { Web3ProviderProxy } from './proxy'
 import { Provider } from 'web3/providers'
 import { getNetId } from './rpc'
 
-const HttpProvider: HttpProviderConstructor = require('web3-provider-http')
-const WebsocketProvider: WebsocketProviderConstructor = require('web3-provider-ws')
+const HttpProvider: HttpProviderConstructor = require('web3-providers-http')
+const WebsocketProvider: WebsocketProviderConstructor = require('web3-providers-ws')
 
 export class Web3 extends Web3JS {
   public hasClientWallet: boolean
@@ -23,16 +23,27 @@ export class Web3 extends Web3JS {
     rpcOptions?: HttpProviderOptions | WebsocketProviderOptions
   ): Promise<Web3> {
     let provider: Provider | undefined = undefined
-    let rpcNetId: number | undefined = undefined
 
     if (rpcUrl) {
-      provider = rpcUrl.startsWith('http') ? new HttpProvider(rpcOptions) : new WebsocketProvider(rpcOptions)
-      rpcNetId = await getNetId(provider)
-
-      if (netId !== null && netId !== undefined && netId !== rpcNetId) { 
-        throw new Error('RPC netId !== provided netId')
+      let rpcNetId: number | undefined = undefined
+      
+      provider = rpcUrl.startsWith('http')
+        ? new HttpProvider(rpcUrl, rpcOptions)
+        : new WebsocketProvider(rpcUrl, rpcOptions)
+      
+      try {
+        rpcNetId = await getNetId(provider)
+      } catch(err) {
+        console.log('Can\'t connect to URL', rpcUrl, err)
+        provider = undefined
       }
-      netId = rpcNetId
+
+      if (rpcNetId) {
+        if (netId !== null && netId !== undefined && netId !== rpcNetId) { 
+          throw new Error('RPC netId !== provided netId')
+        }
+        netId = rpcNetId
+      }
     }
     if (netId === null && netId === undefined) { throw Error('netId is undefined. Provide netId or rpcUrl') }
 

@@ -10,7 +10,6 @@ export interface IEthereumNodeRequest<Method extends string, Response> extends I
   params: Array<any>
 }
 
-
 export interface IEthereumNodeNetworksRequest extends IEthereumNodeRequest<'opw_supportedNetworks', Array<number>> {}
 
 export interface IEthereumNodeUnsubscribeMessage {

@@ -14,8 +14,8 @@ export interface WebsocketProviderOptions {
   clientConfig?: string
 }
 
-export type HttpProviderConstructor = new (options?: HttpProviderOptions) => HttpProvider
-export type WebsocketProviderConstructor = new (options?: WebsocketProviderOptions) => WebsocketProvider
+export type HttpProviderConstructor = new (url: string, options?: HttpProviderOptions) => HttpProvider
+export type WebsocketProviderConstructor = new (url: string, options?: WebsocketProviderOptions) => WebsocketProvider
 
 export interface IWeb3Provider {
   hasClientWallet: boolean

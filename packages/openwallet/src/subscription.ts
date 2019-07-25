@@ -1,7 +1,7 @@
 
 import {
   IProvider, ISubscribeResponseMessage, ISubscribeRequest,
-  ISubscribeRequestMessage, IUnsubscribeRequest
+  ISubscribeRequestMessage, IUnsubscribeRequest, IUnsubscribeRequestMessage
 } from './types'
 
 type SubscriptionEvents = 'message' | 'unsubscribed'
@@ -54,7 +54,7 @@ export class Subscription<
   async unsubscribe(request: URequest): Promise<UResponse> {
     if (!this.isSubscribed) { throw new Error("Subscription is not active")}
 
-    const req: IUnsubscribeRequest<string, URequest & ISubscribeResponseMessage, UResponse> = {
+    const req: IUnsubscribeRequest<string, URequest & IUnsubscribeRequestMessage, UResponse> = {
       type: this.api,
       request: {
         owSubscriptionId: this.response.owSubscriptionId,

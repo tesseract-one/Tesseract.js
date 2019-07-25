@@ -108,5 +108,5 @@ declare module '@tesseractjs/openwallet' {
 OpenWallet.addPlugin("Ethereum", (openWallet) => new Ethereum(openWallet))
 
 export { IEthereumNodeRequest, IEthereumNodeSubscribeRequest, IEthereumNodeNetworksRequest, NodeSubscriptionType }
-export { OpenWallet, Network }
+export { OpenWallet, Network, Transaction }
 export { Tesseract } from '@tesseractjs/core'

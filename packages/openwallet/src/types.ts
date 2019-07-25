@@ -24,7 +24,7 @@ export interface IRequest<Type extends string, Request, Response> {
   __TS_RESPONSE?: Response
 }
 
-export interface ISubscribeRequestMessage<Message, UMessage extends ISubscribeResponseMessage, UResponse> {
+export interface ISubscribeRequestMessage<Message, UMessage extends IUnsubscribeRequestMessage, UResponse> {
   __TS_MESSAGE?: Message
   __TS_UMESSAGE?: UMessage
   __TS_URESPONSE?: UResponse
@@ -34,6 +34,8 @@ export interface ISubscribeResponseMessage {
   owSubscriptionId: string
 }
 
+export interface IUnsubscribeRequestMessage extends ISubscribeResponseMessage {}
+
 export interface ISubscribeRequest<
     API extends string,
     Request extends ISubscribeRequestMessage<any, any, any>,
@@ -42,7 +44,7 @@ export interface ISubscribeRequest<
 
 export interface IUnsubscribeRequest<
   API extends string, 
-  Request extends ISubscribeResponseMessage,
+  Request extends IUnsubscribeRequestMessage,
   Response
 > extends IRequest<API, Request, Response> {}
 
@@ -57,7 +59,7 @@ export interface IProvider {
     request: Request, listener: (message: NonNullable<Request['request']['__TS_MESSAGE']>) => void
   ): Promise<NonNullable<Request['__TS_RESPONSE']>>
 
-  unsubscribe<Request extends IUnsubscribeRequest<string, ISubscribeResponseMessage, any>>(
+  unsubscribe<Request extends IUnsubscribeRequest<string, IUnsubscribeRequestMessage, any>>(
     request: Request
   ): Promise<NonNullable<Request['__TS_RESPONSE']>>
 

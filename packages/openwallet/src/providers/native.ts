@@ -1,9 +1,14 @@
-import { IProvider, IRequest, ISubscribeRequest, IUnsubscribeRequest, ISubscribeResponseMessage } from '../types'
+import { 
+  IProvider, IRequest, ISubscribeRequest, IUnsubscribeRequest, 
+  ISubscribeResponseMessage, IUnsubscribeRequestMessage 
+} from '../types'
+
+const isNodeJs = (typeof process === 'object') && (typeof process.versions.node !== 'undefined')
 
 export interface INativeOpenWalletProvider {  
   version: string
 
-  on(subscriptionId: string, listener: (message: any) => void): () => void
+  on(type: string, subscriptionId: string, listener: (message: any) => void): () => void
   send<Req extends IRequest<string, any, any>>(request: Req): Promise<NonNullable<Req['__TS_RESPONSE']>>
 }
 
@@ -15,7 +20,9 @@ export class NativeProvider implements IProvider {
   supportsSubscriptions: boolean
 
   constructor() {
-    this.openWallet = (<any>window).openwallet
+    if (!isNodeJs) {
+      this.openWallet = (<any>window).openwallet
+    }
     this.isActive = this.openWallet != undefined
     this.supportsSubscriptions = true
     this.subscriptions = {}
@@ -34,31 +41,33 @@ export class NativeProvider implements IProvider {
   async subscribe<Req extends ISubscribeRequest<string, any, ISubscribeResponseMessage>>(
     request: Req, listener: (message: NonNullable<Req['request']['__TS_MESSAGE']>) => void
   ): Promise<NonNullable<Req['__TS_RESPONSE']>> {
+    const type = request.type + '_SUBSCRIBE'
     const owReq: IRequest<string, Req['request'], NonNullable<Req['__TS_RESPONSE']>> = {
-      type: request.type + '_SUBSCRIBE',
+      type,
       request: request.request
     }
     const result = await this.openWallet!.send(owReq)
-    const apiSubs = this.subscriptions[request.type] || {}
-    apiSubs[result.owSubscriptionId] = this.openWallet!.on(result.owSubscriptionId, listener)
-    this.subscriptions[request.type] = apiSubs
+    const apiSubs = this.subscriptions[type] || {}
+    apiSubs[result.owSubscriptionId] = this.openWallet!.on(type, result.owSubscriptionId, listener)
+    this.subscriptions[type] = apiSubs
     return result
   }
 
-  unsubscribe<Req extends IUnsubscribeRequest<string, ISubscribeResponseMessage, any>>(
+  unsubscribe<Req extends IUnsubscribeRequest<string, IUnsubscribeRequestMessage, any>>(
     request: Req
   ): Promise<NonNullable<Req['__TS_RESPONSE']>> {
+    const type = request.type + '_SUBSCRIBE'
     const owReq: IRequest<string, Req['request'], NonNullable<Req['__TS_RESPONSE']>> = {
-      type: request.type + '_SUBSCRIBE',
+      type,
       request: request.request
     }
-    const apiSubs = this.subscriptions[request.type] || {}
+    const apiSubs = this.subscriptions[type] || {}
     const unsubscribe = apiSubs[request.request.owSubscriptionId]
     if (unsubscribe) { 
       delete apiSubs[request.request.owSubscriptionId]
       unsubscribe()
     }
-    this.subscriptions[request.type] = apiSubs
+    this.subscriptions[type] = apiSubs
     return this.openWallet!.send(owReq)
   }
 }
