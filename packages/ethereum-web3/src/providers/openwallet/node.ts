@@ -60,8 +60,8 @@ export class OpenWalletNodeProvider {
       promise = this.ethereum.Node.send(request)
     }
     promise!
-      .then(response => callback(null, { id: payload.id, jsonrpc: payload.jsonrpc, result: response }))
-      .catch(error => callback(error))
+      .then(result => callback(null, { id: payload.id, jsonrpc: payload.jsonrpc, result }))
+      .catch(error => callback(null, { id: payload.id, jsonrpc: payload.jsonrpc, error }))
   }
 
   on(type: string, callback: (message?: any) => void): void {

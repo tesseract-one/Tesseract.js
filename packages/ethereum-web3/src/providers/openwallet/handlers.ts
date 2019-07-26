@@ -58,5 +58,7 @@ HANDLERS['eth_sendTransaction'] = async function (eth, request, netId, chainId, 
   const signature = await eth.signTx(tx, netId, chainId)
   tx.data = oldData
   const sendRawReq = Jsonrpc.toPayload('eth_sendRawTransaction', [buildSignedTransaction(tx, signature)])
-  return await promisifiedSend(provider, sendRawReq)
+  const response = await promisifiedSend(provider, sendRawReq) 
+  if (response.error) throw response.error
+  return response
 }

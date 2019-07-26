@@ -161,7 +161,7 @@ export class CallbackURLProvider implements IProvider {
   }
 
   private hasApi(api: string, resolve: (has: any) => void, reject: (err: any) => void) {
-    if (this.unsupportedApis.find(uApi => api.startsWith(uApi))) {
+    if (this.unsupportedApis.find(uApi => api.startsWith(uApi.toUpperCase()))) {
       reject({type: 'NOT_SUPPORTED', message: 'API is not supported'})
     } else {
       resolve(true)
