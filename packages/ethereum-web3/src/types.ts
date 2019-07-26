@@ -14,6 +14,13 @@ export interface WebsocketProviderOptions {
   clientConfig?: string
 }
 
+export enum EthNetwork {
+  Main = 1,
+  Ropsten = 3,
+  Rinkeby = 4,
+  Kovan = 42
+}
+
 export type HttpProviderConstructor = new (url: string, options?: HttpProviderOptions) => HttpProvider
 export type WebsocketProviderConstructor = new (url: string, options?: WebsocketProviderOptions) => WebsocketProvider
 
