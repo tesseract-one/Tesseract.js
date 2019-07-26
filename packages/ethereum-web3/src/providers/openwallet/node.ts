@@ -50,7 +50,7 @@ export class OpenWalletNodeProvider {
           params: [subscription.response]
         })
       } else {
-        promise = Promise.reject({ type: "NOT_FOUND", code: 32000 })
+        promise = Promise.reject({type: 'METHOD_NOT_FOUND', message: "method not found: "+payload.method, code: -32000})
       }
     } else {
       const request: IEthereumNodeRequest<string, any> = {
@@ -61,10 +61,7 @@ export class OpenWalletNodeProvider {
     }
     promise!
       .then(response => callback(null, { id: payload.id, jsonrpc: payload.jsonrpc, result: response }))
-      .catch(error => {
-        console.log('REQUEST ERROR:', error)
-        callback(null, { id: payload.id, jsonrpc: payload.jsonrpc, error, result: null })
-      })
+      .catch(error => callback(error))
   }
 
   on(type: string, callback: (message?: any) => void): void {

@@ -35,7 +35,6 @@ export class Web3OpenWalletProvider implements IWeb3Provider {
         if (handler) {
           return handler(this.ethereum, payload, this.netId, chainId, this.provider)
             .then(response => ({ jsonrpc: payload.jsonrpc, id: payload.id, result: response } as JsonRPCResponse))
-            .catch(error => ({ jsonrpc: payload.jsonrpc, id: payload.id, error } as JsonRPCResponse))
         }
         return promisifiedSend(this.provider, payload)
       })

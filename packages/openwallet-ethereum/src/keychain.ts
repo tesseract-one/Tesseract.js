@@ -2,6 +2,7 @@ import { IKeychainRequest } from  '@tesseractjs/openwallet'
 
 export type Quantity = string
 export type HexString = string
+export type Base64String = string
 
 export type Transaction = {
   nonce: Quantity
@@ -10,7 +11,7 @@ export type Transaction = {
   gas: Quantity
   gasPrice: Quantity
   value: Quantity
-  data: HexString
+  data: Base64String
 }
 
 export interface IAccountRequest extends IKeychainRequest<"get_account", HexString> {
@@ -25,7 +26,7 @@ export interface ISignTxRequest extends IKeychainRequest<"sign_transaction", Hex
   gas: Quantity
   gasPrice: Quantity
   value: Quantity
-  data: HexString
+  data: Base64String
   chainId: Quantity
 }
 
