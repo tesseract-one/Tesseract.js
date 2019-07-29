@@ -12,10 +12,8 @@ import {
 export type Web3RpcUrlInfo = string | { url: string, options?: HttpProviderOptions | WebsocketProviderOptions }
 
 interface Web3Constructor {
-  config: {
-    rpcUrls: { [key: number]: Web3RpcUrlInfo }
-    providers: Array<IWeb3ProviderFactory>
-  }
+  rpcUrls: { [key: number]: Web3RpcUrlInfo }
+  providers: Array<IWeb3ProviderFactory>
   (
     rpcUrl: string,
     rpcOptions?: HttpProviderOptions | WebsocketProviderOptions
@@ -40,7 +38,7 @@ Ethereum.addPlugin("Web3", (ethereum) => {
       rpcUrl = rpcUrlOrNetId
     } else {
       netId = rpcUrlOrNetId
-      const rpcInfo = ethereum.Web3.config.rpcUrls[netId]
+      const rpcInfo = ethereum.Web3.rpcUrls[netId]
       if (rpcInfo) {
         if (typeof rpcInfo === 'string') {
           rpcUrl = rpcInfo
@@ -50,13 +48,11 @@ Ethereum.addPlugin("Web3", (ethereum) => {
         }
       }
     }
-    return Web3.create(ethereum.Web3.config.providers, ethereum.openWallet, netId, rpcUrl, rpcOptions)
+    return Web3.create(ethereum.Web3.providers, ethereum.openWallet, netId, rpcUrl, rpcOptions)
   }
   
-  web3Constructor.config = {
-    rpcUrls: {},
-    providers: [Web3NativeProvider, Web3OpenWalletProvider, Web3FallbackProvider]
-  }
+  web3Constructor.rpcUrls = {} 
+  web3Constructor.providers = [Web3NativeProvider, Web3OpenWalletProvider, Web3FallbackProvider]
 
   return web3Constructor
 })
