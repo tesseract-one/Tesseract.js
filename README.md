@@ -24,15 +24,15 @@ This command will install latest Tesseract Ethereum Web3 library and Web3.js
 Let's try to get Ethereum account balance.
 
 ```js
-import { Tesseract, EthNetwork } from '@tesseractjs/ethereum-web3';
+import { Tesseract, Network } from '@tesseractjs/ethereum-web3';
 
 // Configuring RPC urls for the library. They will be used in mobile browsers or in read-only mode.
 Tesseract.Ethereum.Web3.rpcUrls = {
-  [EthNetwork.Main]: 'https://mainnet.infura.io/v3/{API-KEY}'
+  [Network.Main]: 'https://mainnet.infura.io/v3/{API-KEY}'
 }
 
 // Creating Web3 instance. Try to reuse existing instance of Web3 in your app.
-const web3 = await Tesseract.Ethereum.Web3(EthNetwork.Main);
+const web3 = await Tesseract.Ethereum.Web3(Network.Main);
 
 // We can use read-only methods if Tesseract can't connect to a Wallet.
 if (!web3.hasClientWallet) {

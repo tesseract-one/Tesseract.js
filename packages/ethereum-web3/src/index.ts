@@ -2,7 +2,7 @@
 import { Web3 } from './web3'
 import { IWeb3ProviderFactory } from './types'
 import { Ethereum } from '@tesseractjs/ethereum'
-import { HttpProviderOptions, WebsocketProviderOptions, EthNetwork } from './types'
+import { HttpProviderOptions, WebsocketProviderOptions, Network } from './types'
 
 import { 
   Web3FallbackProvider,
@@ -18,7 +18,7 @@ interface Web3Constructor {
     rpcUrl: string,
     rpcOptions?: HttpProviderOptions | WebsocketProviderOptions
   ): Promise<Web3>
-  (netId: EthNetwork | number): Promise<Web3>
+  (netId: Network | number): Promise<Web3>
 }
 
 declare module '@tesseractjs/ethereum' {
@@ -57,5 +57,5 @@ Ethereum.addPlugin("Web3", (ethereum) => {
   return web3Constructor
 })
 
-export { Web3, Web3FallbackProvider, Web3NativeProvider, Web3OpenWalletProvider, Ethereum, EthNetwork }
+export { Web3, Web3FallbackProvider, Web3NativeProvider, Web3OpenWalletProvider, Ethereum, Network }
 export { Tesseract } from '@tesseractjs/core'

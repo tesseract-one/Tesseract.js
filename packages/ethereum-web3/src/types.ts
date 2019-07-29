@@ -14,7 +14,7 @@ export interface WebsocketProviderOptions {
   clientConfig?: string
 }
 
-export enum EthNetwork {
+export enum Network {
   Main = 1,
   Ropsten = 3,
   Rinkeby = 4,
