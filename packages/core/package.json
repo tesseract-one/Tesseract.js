@@ -18,8 +18,9 @@
   "bugs": {
     "url": "https://github.com/tesseract-one/Tesseract.js/issues"
   },
-  "main": "dist/core.cjs.js",
-  "module": "dist/core.es.js",
+  "type": "commonjs",
+  "main": "dist/core.js",
+  "module": "dist/core.mjs",
   "browser": "dist/core.umd.js",
   "types": "dist/types/index.d.ts",
   "files": [

@@ -17,8 +17,9 @@
   "bugs": {
     "url": "https://github.com/tesseract-one/Tesseract.js/issues"
   },
-  "main": "dist/openwallet.cjs.js",
-  "module": "dist/openwallet.es.js",
+  "type": "commonjs",
+  "main": "dist/openwallet.js",
+  "module": "dist/openwallet.mjs",
   "browser": "dist/openwallet.umd.js",
   "types": "dist/types/index.d.ts",
   "files": [

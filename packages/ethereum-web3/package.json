@@ -19,8 +19,9 @@
   "bugs": {
     "url": "https://github.com/tesseract-one/Tesseract.js/issues"
   },
-  "main": "dist/ethereum-web3.cjs.js",
-  "module": "dist/ethereum-web3.es.js",
+  "type": "commonjs",
+  "main": "dist/ethereum-web3.js",
+  "module": "dist/ethereum-web3.mjs",
   "browser": "dist/ethereum-web3.umd.js",
   "types": "dist/types/index.d.ts",
   "files": [
@@ -35,7 +36,7 @@
     "access": "public"
   },
   "peerDependencies": {
-    "web3": "^1.2.0"
+    "web3": "^1.2.1"
   },
   "dependencies": {
     "@tesseractjs/core": "^0.0.1",
@@ -45,7 +46,7 @@
     "eth-lib": "~0.2.0"
   },
   "devDependencies": {
-    "web3": "^1.2.0",
+    "web3": "^1.2.1",
     "@types/web3": "^1.0.19"
   }
 }

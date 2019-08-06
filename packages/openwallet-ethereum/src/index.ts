@@ -110,3 +110,4 @@ OpenWallet.addPlugin("Ethereum", (openWallet) => new Ethereum(openWallet))
 export { IEthereumNodeRequest, IEthereumNodeSubscribeRequest, IEthereumNodeNetworksRequest, NodeSubscriptionType }
 export { OpenWallet, Network, Transaction }
 export { Tesseract } from '@tesseractjs/core'
+export default Ethereum

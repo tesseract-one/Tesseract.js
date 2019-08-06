@@ -36,12 +36,18 @@ const config = [
     },
     {
         input: 'src/index.ts',
-        output: [
-            {
-                file: '',
-                format: 'es'
+        output: {
+            file: '',
+            format: 'es',
+            paths: {
+                '@tesseractjs/core': '@tesseractjs/core/core.mjs',
+                '@tesseractjs/ethereum': '@tesseractjs/ethereum/ethereum.mjs',
+                '@tesseractjs/ethereum-web3': '@tesseractjs/ethereum-web3/ethereum-web3.mjs',
+                '@tesseractjs/openwallet': '@tesseractjs/openwallet/openwallet.mjs',
+                '@tesseractjs/openwallet-ethereum': '@tesseractjs/openwallet-ethereum/openwallet-ethereum.mjs'
             }
-        ],
+        }
+        ,
         plugins: [
             autoExternal(),
             typescript(
@@ -75,7 +81,7 @@ export const packageNames = {
  */
 export function rollupConfig(name, outputFileName, globals) {
     // CJS
-    config[0].output[0].file = 'dist/' + outputFileName + '.cjs.js';
+    config[0].output[0].file = 'dist/' + outputFileName + '.js';
 
     // UMD
     config[0].output[1].name = name;
@@ -83,7 +89,7 @@ export function rollupConfig(name, outputFileName, globals) {
     config[0].output[1].globals = globals || {};
 
     // ESM
-    config[1].output[0].file = 'dist/' + outputFileName + '.esm.js';
+    config[1].output.file = 'dist/' + outputFileName + '.mjs';
 
     return config;
 };

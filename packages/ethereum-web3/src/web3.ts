@@ -3,7 +3,7 @@ import { OpenWallet } from '@tesseractjs/openwallet'
 import { 
   IWeb3Provider, IWeb3ProviderFactory,
   HttpProviderOptions, WebsocketProviderOptions,
-  HttpProviderConstructor, WebsocketProviderConstructor
+  HttpProviderConstructor, WebsocketProviderConstructor, Network
 } from './types'
 import { Web3ProviderProxy } from './proxy'
 import { Provider } from 'web3/providers'
@@ -14,6 +14,7 @@ const WebsocketProvider: WebsocketProviderConstructor = require('web3-providers-
 
 export class Web3 extends Web3JS {
   public hasClientWallet: boolean
+  public Network: typeof Network = Network
 
   public static async create(
     providers: Array<IWeb3ProviderFactory>,

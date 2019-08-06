@@ -59,3 +59,4 @@ Ethereum.addPlugin("Web3", (ethereum) => {
 
 export { Web3, Web3FallbackProvider, Web3NativeProvider, Web3OpenWalletProvider, Ethereum, Network }
 export { Tesseract } from '@tesseractjs/core'
+export default Web3

@@ -38,3 +38,4 @@ TesseractModule.addPlugin("Ethereum", (tesseract) => {
 })
 
 export { Tesseract, TesseractModule }
+export default Ethereum
