@@ -24,7 +24,7 @@
     "bootstrap": "lerna bootstrap",
     "lint": "lerna run lint",
     "build": "lerna run build",
-    "release": "npm run bootstrap && npm run build && lerna publish --contents dist"
+    "release": "npm run bootstrap && npm run build && lerna publish --contents dist --no-git-tag-version --no-push"
   },
   "devDependencies": {
     "decomment": "^0.9.2",

@@ -1,13 +1,8 @@
 {
   "version": "0.0.15",
-  "lerna": "3.16.4",
   "command": {
     "init": {
       "exact": true
-    },
-    "publish": {
-      "exact": true,
-      "skipGit": true
     }
   },
   "packages": [
