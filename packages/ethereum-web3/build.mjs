@@ -6,6 +6,7 @@ const pipeline = handleArgs(path.dirname(fileURLToPath(import.meta.url)), (workd
   return build(workdir, [
     '@tesseractjs/core',
     '@tesseractjs/ethereum',
+    '@tesseractjs/openwallet',
     '@tesseractjs/openwallet-ethereum'
   ]).then(() => copyDir('./lib', './dist'))
 })

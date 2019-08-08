@@ -33,9 +33,13 @@ async function toMjs(dataDir, imports) {
       await toMjs(filePath, imports)
       continue
     }
-    if (!filePath.endsWith('.js')) continue
-    await fixMjsImports(filePath, filePath.slice(0, -2) + 'mjs', imports)
-    await unlink(filePath)
+    if (filePath.endsWith('.js')) {
+      await fixMjsImports(filePath, filePath.slice(0, -2) + 'mjs', imports)
+      await unlink(filePath)
+    }
+    if (filePath.endsWith('.d.ts')) {
+      await fixMjsImports(filePath, filePath, imports)
+    }
   }
 }
 
