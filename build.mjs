@@ -26,12 +26,12 @@ export function exec(workdir, command, args) {
 
 async function toMjs(dataDir, imports) {
   const files = await readdir(dataDir)
-  for (const file of files) {
+  const tasks = files.map(async (file) => {
     const filePath = path.join(dataDir, file)
     const stat = await lstat(filePath)
     if (stat.isDirectory()) {
       await toMjs(filePath, imports)
-      continue
+      return
     }
     if (filePath.endsWith('.js')) {
       await fixMjsImports(filePath, filePath.slice(0, -2) + 'mjs', imports)
@@ -40,7 +40,8 @@ async function toMjs(dataDir, imports) {
     if (filePath.endsWith('.d.ts')) {
       await fixMjsImports(filePath, filePath, imports)
     }
-  }
+  })
+  await Promise.all(tasks)
 }
 
 async function fixMjsImports(file, outFile, imports) {
