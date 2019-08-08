@@ -4,12 +4,9 @@
     "outDir": "./dist/esm/",
     "allowSyntheticDefaultImports": true,
     "baseUrl": "src",
-    "rootDirs": [
-      "src",
-      "lib/esm"
-    ]
+    "rootDirs": ["src", "lib/esm"]
   },
-  "include": [ "src/**/*" ],
+  "include": ["src/**/*"],
   "exclude": [
       "node_modules",
       "**/*.d.ts",

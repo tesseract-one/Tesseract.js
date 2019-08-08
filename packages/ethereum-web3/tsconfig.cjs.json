@@ -1,20 +1,9 @@
 {
-  "extends": "../../tsconfig.base",
+  "extends": "./tsconfig",
   "compilerOptions": {
     "target": "es5",
     "module": "commonjs",
     "outDir": "./dist/",
-    "allowSyntheticDefaultImports": true,
-    "baseUrl": "src",
-    "rootDirs": [
-      "src",
-      "lib"
-    ]
-  },
-  "include": [ "src/**/*" ],
-  "exclude": [
-      "node_modules",
-      "**/*.d.ts",
-      "**/*.spec.ts"
-  ]
+    "rootDirs": ["src", "lib"]
+  }
 }
