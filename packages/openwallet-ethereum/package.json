@@ -23,6 +23,7 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "node --experimental-modules build.mjs",
+    "prepack": "node --experimental-modules build.mjs package",
     "lint": "tslint --project ."
   },
   "publishConfig": {

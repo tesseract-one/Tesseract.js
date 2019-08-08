@@ -13,6 +13,9 @@ const readfile = util.promisify(fs.readFile)
 const writefile = util.promisify(fs.writeFile)
 const copyFile = util.promisify(fs.copyFile)
 
+const TSCONFIG_CJS = 'tsconfig.cjs.json'
+const TSCONFIG_MJS = 'tsconfig.json'
+
 export function exec(workdir, command, args) {
   return new Promise((resolve, reject) => {
     const p = cprocess.spawn(command, args, { cwd: workdir, stdio: 'inherit' })
@@ -76,14 +79,12 @@ export async function copyDir(src, dest) {
 
 export async function build(workdir, imports) {
   const tsc = path.join(path.dirname(fileURLToPath(import.meta.url)), 'node_modules/.bin/tsc')
-  const outDir = await getOutDir(workdir, 'tsconfig.cjs.json')
-  const esmOutDir = await getOutDir(workdir, 'tsconfig.json')
-  await exec(workdir, tsc, ['-p', 'tsconfig.json'])
+  const outDir = await getOutDir(workdir, TSCONFIG_CJS)
+  const esmOutDir = await getOutDir(workdir, TSCONFIG_MJS)
+  await exec(workdir, tsc, ['-p', TSCONFIG_MJS])
   await toMjs(path.join(workdir, esmOutDir), imports)
-  await exec(workdir, tsc, ['-p', 'tsconfig.cjs.json'])
-  await fixPackageJson(workdir, outDir)
+  await exec(workdir, tsc, ['-p', TSCONFIG_CJS])
   await copyFile(path.join(workdir, 'README.md'), path.join(workdir, outDir, 'README.md'))
-  await copyFile(path.join(workdir, '../../LICENSE'), path.join(workdir, outDir, 'LICENSE'))
 }
 
 export function exit(promise) {
@@ -95,6 +96,18 @@ export function exit(promise) {
     })
 }
 
-export default function buildAndExit(url, imports) {
-  exit(build(path.dirname(fileURLToPath(url)), imports))
+export async function handleArgs(workdir, onBuild) {
+  if (process.argv.length > 2 && process.argv[2] === 'package') {
+    const outDir = await getOutDir(workdir, TSCONFIG_CJS)
+    return await fixPackageJson(workdir, outDir)
+  } else {
+    return await onBuild(workdir)
+  }
+}
+
+export default function runBuildAndExit(url, imports) {
+  const pipeline = handleArgs(path.dirname(fileURLToPath(url)), (workdir) => {
+    return build(workdir, imports)
+  })
+  exit(pipeline)
 }
