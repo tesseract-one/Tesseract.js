@@ -1,13 +1,16 @@
 {
   "extends": "../../tsconfig.base",
   "compilerOptions": {
-    "outDir": "./dist/esm/"
+    "outDir": "./dist/",
+    "target": "es5",
+    "module": "commonjs"
   },
   "include": [
     "src/**/*"
   ],
   "exclude": [
       "node_modules",
+      "**/*.d.ts",
       "**/*.spec.ts"
   ]
 }

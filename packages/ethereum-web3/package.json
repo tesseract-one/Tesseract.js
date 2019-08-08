@@ -19,17 +19,11 @@
   "bugs": {
     "url": "https://github.com/tesseract-one/Tesseract.js/issues"
   },
-  "type": "commonjs",
-  "main": "dist/ethereum-web3.js",
-  "module": "dist/ethereum-web3.mjs",
-  "browser": "dist/ethereum-web3.umd.js",
-  "types": "dist/types/index.d.ts",
-  "files": [
-    "dist"
-  ],
+  "main": "dist/index.js",
+  "module": "dist/esm/index.mjs",
+  "types": "dist/index.d.ts",
   "scripts": {
-    "build": "rollup -c",
-    "dev": "rollup -wc",
+    "build": "node --experimental-modules build.mjs",
     "lint": "tslint --project ."
   },
   "publishConfig": {
@@ -43,7 +37,7 @@
     "@tesseractjs/ethereum": "^0.0.1",
     "@tesseractjs/openwallet": "^0.0.1",
     "@tesseractjs/openwallet-ethereum": "^0.0.1",
-    "eth-lib": "~0.2.0"
+    "eth-lib": "^0.2.7"
   },
   "devDependencies": {
     "web3": "^1.2.1",

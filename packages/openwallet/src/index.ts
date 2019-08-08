@@ -28,4 +28,3 @@ export {
   ISubscribeResponseMessage, NodeSubscriptionType, IUnsubscribeRequestMessage
 }
 export { Subscription, SubscriptionType } from './subscription'
-export default OpenWallet

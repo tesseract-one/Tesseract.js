@@ -1,20 +1,14 @@
-import Web3JS from 'web3'
+import { Web3 as Web3JS, WebsocketProvider, HttpProvider } from './libs'
 import { OpenWallet } from '@tesseractjs/openwallet'
 import { 
-  IWeb3Provider, IWeb3ProviderFactory,
-  HttpProviderOptions, WebsocketProviderOptions,
-  HttpProviderConstructor, WebsocketProviderConstructor, Network
+  IWeb3Provider, IWeb3ProviderFactory, HttpProviderOptions, WebsocketProviderOptions
 } from './types'
 import { Web3ProviderProxy } from './proxy'
 import { Provider } from 'web3/providers'
 import { getNetId } from './rpc'
 
-const HttpProvider: HttpProviderConstructor = require('web3-providers-http')
-const WebsocketProvider: WebsocketProviderConstructor = require('web3-providers-ws')
-
 export class Web3 extends Web3JS {
   public hasClientWallet: boolean
-  public Network: typeof Network = Network
 
   public static async create(
     providers: Array<IWeb3ProviderFactory>,

@@ -1,21 +1,16 @@
 import { Ethereum, Transaction } from '@tesseractjs/openwallet-ethereum'
 import { Provider, JsonRPCRequest } from 'web3/providers'
-import { Jsonrpc, promisifiedSend, getTransactionCount, estimateGas, getGasPrice } from '../../rpc'
-import Web3 from 'web3'
-
-const ethLib = require('eth-lib')
-const decodeSignature: (sig: string) => [string, string, string] = ethLib.account.decodeSignature
-const rlpEncode: (data: any[]) => string = ethLib.RLP.encode
-const bytesFromNat: (nat: string) => string = ethLib.bytes.fromNat
+import { promisifiedSend, getTransactionCount, estimateGas, getGasPrice } from '../../rpc'
+import { Web3, eth, Jsonrpc } from '../../libs'
 
 function buildSignedTransaction(tx: Transaction, signature: string): string {
-  const [v, r, s] = decodeSignature(signature)
+  const [v, r, s] = eth.account.decodeSignature(signature)
   const rlpData = [
-    bytesFromNat(tx.nonce), bytesFromNat(tx.gasPrice),
-    bytesFromNat(tx.gas), tx.to ? tx.to.toLowerCase() : '0x',
-    bytesFromNat(tx.value), tx.data ? tx.data : '0x', v, r, s
+    eth.bytes.fromNat(tx.nonce), eth.bytes.fromNat(tx.gasPrice),
+    eth.bytes.fromNat(tx.gas), tx.to ? tx.to.toLowerCase() : '0x',
+    eth.bytes.fromNat(tx.value), tx.data ? tx.data : '0x', v, r, s
   ]
-  return rlpEncode(rlpData)
+  return eth.RLP.encode(rlpData)
 }
 
 export const HANDLERS: {

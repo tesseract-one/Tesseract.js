@@ -20,4 +20,3 @@ export class TesseractModule {
 }
 
 export const Tesseract = new TesseractModule()
-export default Tesseract

@@ -1,12 +1,14 @@
 {
   "extends": "../../tsconfig.base",
   "compilerOptions": {
-    "outDir": "./dist/esm/",
+    "target": "es5",
+    "module": "commonjs",
+    "outDir": "./dist/",
     "allowSyntheticDefaultImports": true,
     "baseUrl": "src",
     "rootDirs": [
       "src",
-      "lib/esm"
+      "lib"
     ]
   },
   "include": [ "src/**/*" ],

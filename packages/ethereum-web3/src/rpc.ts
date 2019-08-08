@@ -1,17 +1,6 @@
 import { JsonRPCRequest, JsonRPCResponse, Provider } from 'web3/providers'
 import { Transaction } from '@tesseractjs/openwallet-ethereum'
-import Web3 from 'web3'
-import BN from 'bn.js'
-
-interface IJsonRpc {
-  messageId: number
-
-  toPayload(method: string, params: any[]): JsonRPCRequest
-  isValidResponse(response: JsonRPCResponse): boolean
-  toBatchPayload(messages: Array<{ method: string, params: any[] }>): JsonRPCRequest[]
-}
-
-export const Jsonrpc: IJsonRpc = require('web3-core-requestmanager/src/jsonrpc')
+import { Web3, BN, Jsonrpc } from './libs'
 
 export function promisifiedSend(provider: Provider, request: JsonRPCRequest): Promise<JsonRPCResponse> {
   return new Promise((resolve, reject) => {

@@ -1,5 +1,12 @@
 import { OpenWallet } from '@tesseractjs/openwallet'
-import { Provider, JsonRPCRequest, JsonRPCResponse, Callback, HttpProvider, WebsocketProvider } from 'web3/providers'
+import { Provider, JsonRPCRequest, JsonRPCResponse, Callback } from 'web3/providers'
+
+export enum Network {
+  Main = 1,
+  Ropsten = 3,
+  Rinkeby = 4,
+  Kovan = 42
+}
 
 export interface HttpProviderOptions {
   keepAlive?: boolean
@@ -13,16 +20,6 @@ export interface WebsocketProviderOptions {
   protocol?: string
   clientConfig?: string
 }
-
-export enum Network {
-  Main = 1,
-  Ropsten = 3,
-  Rinkeby = 4,
-  Kovan = 42
-}
-
-export type HttpProviderConstructor = new (url: string, options?: HttpProviderOptions) => HttpProvider
-export type WebsocketProviderConstructor = new (url: string, options?: WebsocketProviderOptions) => WebsocketProvider
 
 export interface IWeb3Provider {
   hasClientWallet: boolean

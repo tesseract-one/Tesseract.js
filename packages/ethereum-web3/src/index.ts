@@ -1,5 +1,5 @@
 
-import { Web3 } from './web3'
+import { Web3 } from './web3wrapper'
 import { IWeb3ProviderFactory } from './types'
 import { Ethereum } from '@tesseractjs/ethereum'
 import { HttpProviderOptions, WebsocketProviderOptions, Network } from './types'
@@ -59,4 +59,3 @@ Ethereum.addPlugin("Web3", (ethereum) => {
 
 export { Web3, Web3FallbackProvider, Web3NativeProvider, Web3OpenWalletProvider, Ethereum, Network }
 export { Tesseract } from '@tesseractjs/core'
-export default Web3

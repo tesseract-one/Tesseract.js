@@ -24,14 +24,11 @@
     "bootstrap": "lerna bootstrap",
     "lint": "lerna run lint",
     "build": "lerna run build",
-    "release": "npm run bootstrap && npm run build && lerna publish --skip-git"
+    "release": "npm run bootstrap && npm run build && lerna publish --contents dist"
   },
   "devDependencies": {
+    "decomment": "^0.9.2",
     "lerna": "^3.16.4",
-    "rollup": "^1.17.0",
-    "rollup-plugin-auto-external": "^2.0.0",
-    "rollup-plugin-cleanup": "^3.1.1",
-    "rollup-plugin-typescript2": "^0.22.0",
     "tslint": "^5.18.0",
     "typescript": "^3.5.3"
   }

@@ -19,17 +19,11 @@
   "bugs": {
     "url": "https://github.com/tesseract-one/Tesseract.js/issues"
   },
-  "type": "commonjs",
-  "main": "dist/ethereum.js",
-  "module": "dist/ethereum.mjs",
-  "browser": "dist/ethereum.umd.js",
-  "types": "dist/types/index.d.ts",
-  "files": [
-    "dist"
-  ],
+  "main": "dist/index.js",
+  "module": "dist/esm/index.mjs",
+  "types": "dist/index.d.ts",
   "scripts": {
-    "build": "rollup -c",
-    "dev": "rollup -wc",
+    "build": "node --experimental-modules build.mjs",
     "lint": "tslint --project ."
   },
   "dependencies": {

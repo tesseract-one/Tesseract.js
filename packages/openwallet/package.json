@@ -17,17 +17,11 @@
   "bugs": {
     "url": "https://github.com/tesseract-one/Tesseract.js/issues"
   },
-  "type": "commonjs",
-  "main": "dist/openwallet.js",
-  "module": "dist/openwallet.mjs",
-  "browser": "dist/openwallet.umd.js",
-  "types": "dist/types/index.d.ts",
-  "files": [
-    "dist"
-  ],
+  "main": "dist/index.js",
+  "module": "dist/ems/index.mjs",
+  "types": "dist/index.d.ts",
   "scripts": {
-    "build": "rollup -c",
-    "dev": "rollup -wc",
+    "build": "node --experimental-modules build.mjs",
     "lint": "tslint --project ."
   },
   "publishConfig": {
