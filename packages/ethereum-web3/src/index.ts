@@ -1,6 +1,6 @@
 
 import { Web3 } from './web3wrapper'
-import { IWeb3ProviderFactory } from './types'
+import { ITesseractWeb3ProviderFactory } from './types'
 import { Ethereum } from '@tesseractjs/ethereum'
 import { HttpProviderOptions, WebsocketProviderOptions, Network } from './types'
 
@@ -13,7 +13,7 @@ export type Web3RpcUrlInfo = string | { url: string, options?: HttpProviderOptio
 
 interface Web3Constructor {
   rpcUrls: { [key: number]: Web3RpcUrlInfo }
-  providers: Array<IWeb3ProviderFactory>
+  providers: Array<ITesseractWeb3ProviderFactory>
   (
     rpcUrl: string,
     rpcOptions?: HttpProviderOptions | WebsocketProviderOptions

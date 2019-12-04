@@ -69,7 +69,7 @@ export class CallbackURLProvider implements IProvider {
 
     var response: OWResponse
     try {
-      // base64url encoding with sttripped padding https://tools.ietf.org/html/rfc4648#page-7
+      // base64url encoding with stripped padding https://tools.ietf.org/html/rfc4648#page-7
       let base64 = hash
         .substr("#openwallet-".length)
         .replace(/-/g, '+')
@@ -144,7 +144,7 @@ export class CallbackURLProvider implements IProvider {
     if (this.messageQueue.length === 0) { return }
     const message = this.messageQueue[0]!
 
-    // base64url encoding with sttripped padding https://tools.ietf.org/html/rfc4648#page-7
+    // base64url encoding with stripped padding https://tools.ietf.org/html/rfc4648#page-7
     const data = btoa(JSON.stringify(message.message))
       .replace(/=+$/, '')
       .replace(/\+/g, '-')

@@ -1,40 +1,42 @@
-import { IWeb3Provider, Web3ProviderOptions } from '../../types'
+import { ITesseractWeb3Provider, TesseractWeb3ProviderOptions, AnyWeb3Provider, IWeb3Provider } from '../../types'
 import { Ethereum } from '@tesseractjs/openwallet-ethereum'
-import { Provider, JsonRPCRequest, JsonRPCResponse, Callback, WebsocketProvider } from 'web3/providers'
+import { JsonRpcPayload, JsonRpcResponse } from 'web3-core-helpers'
 import { getChainId, promisifiedSend } from '../../rpc'
 import { OpenWalletNodeProvider } from './node'
 import { HANDLERS } from './handlers'
 
 
-export class Web3OpenWalletProvider implements IWeb3Provider {
+export class Web3OpenWalletProvider implements ITesseractWeb3Provider {
   hasClientWallet: boolean = true
-  supportsSubscriptions: boolean
-
+  
   private ethereum: Ethereum
-  private provider: Provider
+  private provider: AnyWeb3Provider
 
   private netId: number
   private chainId: Promise<string>
 
   get connected(): boolean {
-    return (<any>this.provider).connected
+    return this.provider.connected
   }
 
-  constructor(netId: number, supportsSubscriptions: boolean, ethereum: Ethereum, provider: Provider) {
+  supportsSubscriptions(): boolean {
+    return this.provider.supportsSubscriptions()
+  }
+
+  constructor(netId: number, ethereum: Ethereum, provider: AnyWeb3Provider) {
     this.netId = netId
     this.chainId = getChainId(provider)
     this.provider = provider
-    this.supportsSubscriptions = supportsSubscriptions
     this.ethereum = ethereum
   }
 
-  send(payload: JsonRPCRequest, callback: Callback<JsonRPCResponse>): void {
+  send(payload: JsonRpcPayload, callback: (error: Error | null, result?: JsonRpcResponse) => void): void {
     this.chainId
       .then(chainId => {
         const handler = HANDLERS[payload.method]
         if (handler) {
           return handler(this.ethereum, payload, this.netId, chainId, this.provider)
-            .then(result => ({ jsonrpc: payload.jsonrpc, id: payload.id, result } as JsonRPCResponse))
+            .then(result => ({ jsonrpc: payload.jsonrpc, id: payload.id, result } as JsonRpcResponse))
         }
         return promisifiedSend(this.provider, payload)
       })
@@ -46,41 +48,35 @@ export class Web3OpenWalletProvider implements IWeb3Provider {
   }
 
   on(type: string, callback: (message?: any) => any): void {
-    if (!this.supportsSubscriptions) { throw new Error('Subscriptions is not supported') }
-    (<WebsocketProvider>this.provider).on(type, callback)
+    if (!this.supportsSubscriptions()) { throw new Error('Subscriptions is not supported') }
+    (<IWeb3Provider>this.provider).on(type, callback)
   }
 
   removeListener(type: string, callback: (message?: any) => any): void {
-    if (!this.supportsSubscriptions) { throw new Error('Subscriptions is not supported') }
-    (<WebsocketProvider>this.provider).removeListener(type, callback)
+    if (!this.supportsSubscriptions()) { throw new Error('Subscriptions is not supported') }
+    (<IWeb3Provider>this.provider).removeListener(type, callback)
   }
 
   reset() {
-    if ((<any>this.provider).reset) {
+    if (typeof (<any>this.provider).reset === 'function') {
       (<any>this.provider).reset()
     }
   }
 
   private static async createNative(ethereum: Ethereum, netId: number): Promise<Web3OpenWalletProvider> {
-    if (!await ethereum.Node.canSend()) { throw new Error('Node API is not supported') }
-    const supportedNetworks = await ethereum.Node.supportedNetworks()
-    if (supportedNetworks.indexOf(netId) < 0) { throw new Error('Network is not supported: ' + netId)}
-    const supportsSubscriptions = await ethereum.Node.canSubscribe()
-    return new Web3OpenWalletProvider(netId, supportsSubscriptions, ethereum, new OpenWalletNodeProvider(ethereum, netId))
+    const provider = await OpenWalletNodeProvider.create(ethereum, netId)
+    return new Web3OpenWalletProvider(netId, ethereum, provider)
   }
 
-  public static async create({ openWallet, provider, netId }: Web3ProviderOptions): Promise<IWeb3Provider> {
+  public static async create({ openWallet, provider, netId }: TesseractWeb3ProviderOptions): Promise<ITesseractWeb3Provider> {
     const ethereum = new Ethereum(openWallet)
     if (!openWallet.hasOpenWallet) { throw new Error('OpenWallet is not supported') }
     if (!await ethereum.isKeychainInstalled()) { throw new Error('OpenWallet does not support Ethereum keychain') }
     try {
       return await this.createNative(ethereum, netId)
     } catch {
-      if (provider) {
-        const supportsSubscriptions = typeof (<any>provider).on === 'function'
-        return new Web3OpenWalletProvider(netId, supportsSubscriptions, ethereum, provider)
-      }
-      throw new Error('Doesn\'t have any provider')
+      if (!provider) { throw new Error('Doesn\'t have any provider') }
+      return new Web3OpenWalletProvider(netId, ethereum, provider)
     }
   }
 }

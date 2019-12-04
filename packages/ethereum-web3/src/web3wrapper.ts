@@ -1,23 +1,24 @@
 import { Web3 as Web3JS, WebsocketProvider, HttpProvider } from './libs'
 import { OpenWallet } from '@tesseractjs/openwallet'
 import { 
-  IWeb3Provider, IWeb3ProviderFactory, HttpProviderOptions, WebsocketProviderOptions
+  ITesseractWeb3Provider, ITesseractWeb3ProviderFactory,
+  HttpProviderOptions, WebsocketProviderOptions,
+  AnyWeb3Provider
 } from './types'
 import { Web3ProviderProxy } from './proxy'
-import { Provider } from 'web3/providers'
 import { getNetId } from './rpc'
 
 export class Web3 extends Web3JS {
   public hasClientWallet: boolean
 
   public static async create(
-    providers: Array<IWeb3ProviderFactory>,
+    providers: Array<ITesseractWeb3ProviderFactory>,
     openWallet: OpenWallet,
     netId?: number,
     rpcUrl?: string,
     rpcOptions?: HttpProviderOptions | WebsocketProviderOptions
   ): Promise<Web3> {
-    let provider: Provider | undefined = undefined
+    let provider: AnyWeb3Provider | undefined = undefined
 
     if (rpcUrl) {
       let rpcNetId: number | undefined = undefined
@@ -44,7 +45,7 @@ export class Web3 extends Web3JS {
 
     const factoryOptions = { openWallet, netId: netId!, provider }
 
-    const reducer: (index: number) => Promise<IWeb3Provider> = (index) => {
+    const reducer: (index: number) => Promise<ITesseractWeb3Provider> = (index) => {
       if (index >= providers.length) { throw new Error("Can't find proper provider") }
       return providers[index].create(factoryOptions)
         .catch(() => reducer(index+1))
@@ -54,9 +55,9 @@ export class Web3 extends Web3JS {
   }
 
   constructor(
-    provider: IWeb3Provider,
+    provider: ITesseractWeb3Provider,
   ) {
-    super(new Proxy(provider, new Web3ProviderProxy()))
+    super(new Proxy(provider, new Web3ProviderProxy()) as WebsocketProvider)
     this.hasClientWallet = provider.hasClientWallet
   }
 }

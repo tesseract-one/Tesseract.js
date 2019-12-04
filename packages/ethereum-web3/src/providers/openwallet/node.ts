@@ -1,16 +1,26 @@
 import { Ethereum } from '@tesseractjs/openwallet-ethereum'
-import { JsonRPCRequest, JsonRPCResponse, Callback } from 'web3/providers'
+import { JsonRpcPayload, JsonRpcResponse } from 'web3-core-helpers'
+import { IWeb3Provider } from '../../types'
 import { IEthereumNodeSubscribeRequest, IEthereumNodeRequest, NodeSubscriptionType } from '@tesseractjs/openwallet-ethereum'
+import { Jsonrpc } from '../../libs'
 
-export class OpenWalletNodeProvider {
+export class OpenWalletNodeProvider implements IWeb3Provider {
   private ethereum: Ethereum
   private netId: number
   private subscriptions: { [key: string]: NodeSubscriptionType<IEthereumNodeSubscribeRequest<any[], any>> } = {}
   private subscribers: { [key: string]: Array<(message?: any) => void> } = {}
+  private _supportsSubscriptions: boolean
 
-  constructor(ethereum: Ethereum, netId: number) {
+  connected: boolean = true
+  
+  supportsSubscriptions(): boolean {
+    return this._supportsSubscriptions
+  }
+
+  constructor(ethereum: Ethereum, netId: number, supportsSubscriptions: boolean) {
     this.ethereum = ethereum
     this.netId = netId
+    this._supportsSubscriptions = supportsSubscriptions
   }
 
   private emit(type: string, message?: any) {
@@ -22,7 +32,7 @@ export class OpenWalletNodeProvider {
     }
   }
 
-  send(payload: JsonRPCRequest, callback: Callback<JsonRPCResponse>): void {
+  send(payload: JsonRpcPayload, callback: (error: Error | null, result?: JsonRpcResponse) => void): void {
     let promise: Promise<any> | undefined
     if (payload.method.endsWith('_subscribe')) {
       const request = {
@@ -59,9 +69,12 @@ export class OpenWalletNodeProvider {
       }
       promise = this.ethereum.Node.send(request)
     }
+    const id = typeof payload.id === 'number'
+      ? payload.id
+      : typeof payload.id === 'string' ? parseInt(payload.id, 10) : Jsonrpc.messageId++  
     promise!
-      .then(result => callback(null, { id: payload.id, jsonrpc: payload.jsonrpc, result }))
-      .catch(error => callback(null, { id: payload.id, jsonrpc: payload.jsonrpc, error }))
+      .then(result => callback(null, { id, jsonrpc: payload.jsonrpc, result }))
+      .catch(error => callback(null, { id, jsonrpc: payload.jsonrpc, error }))
   }
 
   on(type: string, callback: (message?: any) => void): void {
@@ -90,5 +103,13 @@ export class OpenWalletNodeProvider {
       })
     }
     this.subscriptions = {}
+  }
+
+  static async create(ethereum: Ethereum, netId: number): Promise<OpenWalletNodeProvider> {
+    if (!await ethereum.Node.canSend()) { throw new Error('Node API is not supported') }
+    const supportedNetworks = await ethereum.Node.supportedNetworks()
+    if (supportedNetworks.indexOf(netId) < 0) { throw new Error('Network is not supported: ' + netId)}
+    const supportsSubscriptions = await ethereum.Node.canSubscribe()
+    return new OpenWalletNodeProvider(ethereum, netId, supportsSubscriptions)
   }
 }

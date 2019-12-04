@@ -1,5 +1,6 @@
 import { Ethereum, Transaction } from '@tesseractjs/openwallet-ethereum'
-import { Provider, JsonRPCRequest } from 'web3/providers'
+import { AnyWeb3Provider } from '../../types'
+import { JsonRpcPayload } from 'web3-core-helpers'
 import { promisifiedSend, getTransactionCount, estimateGas, getGasPrice } from '../../rpc'
 import { Web3, eth, Jsonrpc } from '../../libs'
 
@@ -15,7 +16,7 @@ function buildSignedTransaction(tx: Transaction, signature: string): string {
 
 export const HANDLERS: {
   [method: string]: (
-    eth: Ethereum, request: JsonRPCRequest, netId: number, chainId: string, provider: Provider
+    eth: Ethereum, request: JsonRpcPayload, netId: number, chainId: string, provider: AnyWeb3Provider
   ) => Promise<any>
 } = {}
 

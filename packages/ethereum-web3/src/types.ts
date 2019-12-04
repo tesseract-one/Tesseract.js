@@ -1,5 +1,10 @@
 import { OpenWallet } from '@tesseractjs/openwallet'
-import { Provider, JsonRPCRequest, JsonRPCResponse, Callback } from 'web3/providers'
+import { HttpProvider, WebsocketProvider } from 'web3-core'
+export {
+  HttpProviderOptions, WebsocketProviderOptions
+} from 'web3-core-helpers'
+
+import { JsonRpcPayload, JsonRpcResponse } from 'web3-core-helpers'
 
 export enum Network {
   Main = 1,
@@ -8,39 +13,31 @@ export enum Network {
   Kovan = 42
 }
 
-export interface HttpProviderOptions {
-  keepAlive?: boolean
-  timeout?: number
-  headers?: { [key: string]: string }
-}
-
-export interface WebsocketProviderOptions {
-  timeout?: number
-  headers?: { [key: string]: string }
-  protocol?: string
-  clientConfig?: string
-}
-
 export interface IWeb3Provider {
-  hasClientWallet: boolean
-
-  supportsSubscriptions: boolean
-
   connected: boolean
 
-  send(payload: JsonRPCRequest, callback: Callback<JsonRPCResponse>): void;
+  supportsSubscriptions(): boolean;
+
+  send(payload: JsonRpcPayload, callback: (error: Error | null, result?: JsonRpcResponse) => void): void;
 
   on(type: string, callback: (message?: any) => any): void;
   removeListener(type: string, callback: (message?: any) => any): void;
+  
   reset(): void
 }
 
-export type Web3ProviderOptions = {
-  openWallet: OpenWallet
-  netId: number
-  provider?: Provider
+export type AnyWeb3Provider = HttpProvider | WebsocketProvider | IWeb3Provider
+
+export interface ITesseractWeb3Provider extends IWeb3Provider {
+  hasClientWallet: boolean
 }
 
-export interface IWeb3ProviderFactory {
-  create(options: Web3ProviderOptions): Promise<IWeb3Provider>
+export type TesseractWeb3ProviderOptions = {
+  openWallet: OpenWallet
+  netId: number
+  provider?: AnyWeb3Provider
+}
+
+export interface ITesseractWeb3ProviderFactory {
+  create(options: TesseractWeb3ProviderOptions): Promise<ITesseractWeb3Provider>
 }

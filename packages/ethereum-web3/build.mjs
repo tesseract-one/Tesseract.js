@@ -1,4 +1,4 @@
-import { build, copyDir, exit, handleArgs } from '../../build'
+import { build, copyDir, exit, handleArgs } from '../../build.mjs'
 import { fileURLToPath } from 'url'
 import path from 'path'
 

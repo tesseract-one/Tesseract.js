@@ -1,8 +1,9 @@
-import { IWeb3Provider, Web3ProviderOptions } from '../types'
-import { Provider } from 'web3/providers'
+import {
+  ITesseractWeb3Provider, TesseractWeb3ProviderOptions, AnyWeb3Provider
+} from '../types'
 import { getNetId } from '../rpc'
 
-type AnyProvider = Provider & IWeb3Provider
+type AnyProvider = AnyWeb3Provider & ITesseractWeb3Provider
 
 export class Web3NativeProvider implements ProxyHandler<AnyProvider> {
 
@@ -17,7 +18,11 @@ export class Web3NativeProvider implements ProxyHandler<AnyProvider> {
   public get(target: AnyProvider, p: PropertyKey, receiver: any): any {
     switch (p) {
       case 'hasClientWallet': return true
-      case 'supportsSubscriptions': return Reflect.get(target, 'on', receiver) !== undefined
+      case 'supportsSubscriptions': {
+        const func = Reflect.get(target, p, receiver)
+        if (typeof func === 'function') { return func }
+        return () => Reflect.get(target, 'on', receiver) !== undefined
+      } 
       default: return Reflect.get(target, p, receiver)
     }
   }
@@ -34,13 +39,13 @@ export class Web3NativeProvider implements ProxyHandler<AnyProvider> {
     return Reflect.ownKeys(target).concat(['hasClientWallet', 'supportsSubscriptions'])
   }
 
-  private static async _fromProvider(provider: Provider, netId: number): Promise<IWeb3Provider> {
+  private static async _fromProvider(provider: AnyWeb3Provider, netId: number): Promise<ITesseractWeb3Provider> {
     const rpcNetId = await getNetId(provider)
     if (netId !== rpcNetId) { throw new Error('Provider has different netId') }
     return new Proxy(provider as AnyProvider, new Web3NativeProvider())
   }
 
-  public static async create({ netId }: Web3ProviderOptions): Promise<IWeb3Provider> {
+  public static async create({ netId }: TesseractWeb3ProviderOptions): Promise<ITesseractWeb3Provider> {
     if (!window) { throw new Error('Will work only in browser') }
     if ((<any>window).ethereum) {
       await (<any>window).ethereum.enable()
