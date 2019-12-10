@@ -1,24 +1,25 @@
 import { 
   IProvider, IRequest, API, HasApiRequest,
-  ISubscribeRequest, ISubscribeRequestMessage
+  ISubscribeRequest, ISubscribeRequestMessage, ErrorType
 } from './types'
+import { IOpenWallet } from './interface'
+import { walletIsNotInstalledDefaultErrorHandler } from './error'
 import { Subscription, SubscriptionType } from './subscription'
 
 export interface OpenWalletPluginFactory<T> {
   (openWallet: OpenWallet): T
 }
 
-export interface OpenWalletMethodPluginFactory {
-  (proto: OpenWallet): void
-}
-
-export class OpenWallet {
+export class OpenWallet implements IOpenWallet {
   public provider?: IProvider
 
   public static defaultProviders: Array<IProvider> = []
   public static plugins: { [name: string]: any; } = {}
 
+  public walletIsNotInstalledErrorHandler: (openWallet: IOpenWallet) => void
+
   constructor(providers: Array<IProvider>) {
+    this.walletIsNotInstalledErrorHandler = walletIsNotInstalledDefaultErrorHandler
     for (const provider of providers) {
       if (provider.isActive) {
         this.provider = provider
@@ -42,10 +43,11 @@ export class OpenWallet {
     request: Request
   ): Promise<SubscriptionType<Request>> {
     if (!this.provider!.supportsSubscriptions) {
-      return Promise.reject({type: 'NOT_SUPPORTED', message: 'API is not supported'})
+      return Promise.reject({type: ErrorType.notSupported, message: 'API is not supported'})
     }
     var subscription: SubscriptionType<Request> | undefined
-    const response = await this.provider!.subscribe(request, (m) => subscription!.emit('message', m))
+    const req = this.provider!.subscribe(request, (m) => subscription!.emit('message', m))
+    const response = await this._catchNotInstalled(req)
     subscription = new Subscription(request.type, response, this.provider!)
     return subscription
   }
@@ -58,13 +60,13 @@ export class OpenWallet {
     return this.send(message)
       .then(() => true)
       .catch(err => {
-        if (err.type !== 'NOT_SUPPORTED') { throw err }
+        if (err.type !== ErrorType.notSupported) { throw err }
         return false
       })
   }
 
   public send<P extends IRequest<string, any, any>>(message: P): Promise<NonNullable<P['__TS_RESPONSE']>> {
-    return this.provider!.send(message)
+    return this._catchNotInstalled(this.provider!.send(message))
   }
 
   public static addPlugin<P extends keyof OpenWallet>(prop: P, factory: OpenWalletPluginFactory<OpenWallet[P]>) {
@@ -76,6 +78,15 @@ export class OpenWallet {
         }
         return self.plugins[prop]
       }
+    })
+  }
+
+  private _catchNotInstalled<T>(req: Promise<T>): Promise<T> {
+    return req.catch(err => {
+      if (err.type === ErrorType.walletIsNotInstalled || err.message === ErrorType.walletIsNotInstalled) {
+        this.walletIsNotInstalledErrorHandler(this)
+      }
+      throw err
     })
   }
 }

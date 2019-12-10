@@ -3,7 +3,7 @@ import {
   ISubscribeResponseMessage, IUnsubscribeRequestMessage 
 } from '../types'
 
-const isNodeJs = (typeof process === 'object') && (typeof process.versions.node !== 'undefined')
+import { isNodeJs } from '../helpers'
 
 export interface INativeOpenWalletProvider {  
   version: string

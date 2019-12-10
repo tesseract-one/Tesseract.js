@@ -16,7 +16,12 @@ export enum Version {
   v1 = "1.0"
 }
 
-//export type BasicErrorTypes = "NOT_SUPPORTED" | "CANCELLED_BY_USER" | "WRONG_PARAMETERS" | "UNKNOWN_ERROR"
+export enum ErrorType {
+  walletIsNotInstalled = "WALLET_IS_NOT_INSTALLED",
+  notSupported = "NOT_SUPPORTED",
+  wrongMessageId = "WRONG_MESSAGE_ID",
+  timeout = "TIMEOUT"
+}
 
 export interface IRequest<Type extends string, Request, Response> {
   type: Type
@@ -68,4 +73,3 @@ export interface IProvider {
 
 export type HasApiResponse = boolean
 export type HasApiRequest = IRequest<"OPENWALLET_HAS_API", { type: API | string }, HasApiResponse>
-

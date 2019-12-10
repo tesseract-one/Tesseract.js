@@ -23,16 +23,22 @@ declare module 'eth-lib' {
 
   interface IRLP {
     encode(data: any[]): string
+    decode(tx: string): any[]
   }
 
   interface IBytes {
     fromNat(nat: string): string
   }
 
+  interface ITransaction {
+    signingData(tx: any): string
+  }
+
   interface IEthLib {
     RLP: IRLP
-    bytes: IBytes
     account: IAccount
+    bytes: IBytes
+    transaction: ITransaction
   }
 
   var EthLib: IEthLib

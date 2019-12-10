@@ -1,7 +1,9 @@
-import { IProvider, IRequest, ISubscribeRequest, IUnsubscribeRequest, Version, API } from '../types'
+import { 
+  IProvider, IRequest, ISubscribeRequest, IUnsubscribeRequest,
+  Version, API, ErrorType
+} from '../types'
 
-const isNodeJs = (typeof process === 'object') && (typeof process.versions.node !== 'undefined')
-const iOS = !isNodeJs && /iPad|iPhone|iPod/.test(window.navigator.platform)
+import { isIOS } from '../helpers'
 
 var _INSTANCE: CallbackURLProvider | undefined = undefined
 
@@ -54,7 +56,7 @@ export class CallbackURLProvider implements IProvider {
   }
 
   private constructor() {
-    this.isActive = iOS
+    this.isActive = isIOS
     this.supportsSubscriptions = false
     this.isWorking = false
     this.messageQueue = []
@@ -96,7 +98,7 @@ export class CallbackURLProvider implements IProvider {
       const failed = this.messageQueue.filter(m => m.message.id < response.id)
       this.messageQueue = this.messageQueue.filter(m => m.message.id >= response.id)
       for (const message of failed) {
-        message.callback({type: 'WRONG_MESSAGE_ID', message: `Got wrong message id: ${response.id}`})
+        message.callback({type: ErrorType.wrongMessageId, message: `Got wrong message id: ${response.id}`})
       }
       if (this.messageQueue.length === 0 || this.messageQueue[0]!.message.id !== response.id) {
         this.sendMessage()
@@ -127,7 +129,7 @@ export class CallbackURLProvider implements IProvider {
     this.sendTimeout = undefined
     const message = this.messageQueue.shift()!
 
-    message.callback({type: 'NOT_INSTALLED', message: 'OpenWallet is not installed'})
+    message.callback({type: ErrorType.walletIsNotInstalled, message: 'Wallet is not installed'})
   }
 
   private timeoutHandler() {
@@ -136,7 +138,7 @@ export class CallbackURLProvider implements IProvider {
     this.messageQueue = this.messageQueue.filter(m => m.time > time)
 
     for (const m of timedOut) {
-      m.callback({type: 'TIMEOUT', message: 'Request is timed out'})
+      m.callback({type: ErrorType.timeout, message: 'Request is timed out'})
     }
   }
 
@@ -162,7 +164,7 @@ export class CallbackURLProvider implements IProvider {
 
   private hasApi(api: string, resolve: (has: any) => void, reject: (err: any) => void) {
     if (this.unsupportedApis.find(uApi => api.startsWith(uApi.toUpperCase()))) {
-      reject({type: 'NOT_SUPPORTED', message: 'API is not supported'})
+      reject({type: ErrorType.notSupported, message: 'API is not supported'})
     } else {
       resolve(true)
     }
@@ -216,12 +218,12 @@ export class CallbackURLProvider implements IProvider {
   subscribe<Req extends ISubscribeRequest<string, any, any>>(
     _request: Req, _listener: (message: NonNullable<Req['request']['__TS_MESSAGE']>) => void
   ): Promise<NonNullable<Req['__TS_RESPONSE']>> {
-    throw new Error('NOT_SUPPORTED')
+    throw new Error(ErrorType.notSupported)
   }
 
   unsubscribe<Req extends IUnsubscribeRequest<string, any, any>>(
     _request: Req
   ): Promise<NonNullable<Req['__TS_RESPONSE']>> {
-    throw new Error('NOT_SUPPORTED')
+    throw new Error(ErrorType.notSupported)
   }
 }

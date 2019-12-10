@@ -2,16 +2,17 @@ import { Ethereum, Transaction } from '@tesseractjs/openwallet-ethereum'
 import { AnyWeb3Provider } from '../../types'
 import { JsonRpcPayload } from 'web3-core-helpers'
 import { promisifiedSend, getTransactionCount, estimateGas, getGasPrice } from '../../rpc'
-import { Web3, eth, Jsonrpc } from '../../libs'
+import { Web3, eth, Jsonrpc, BN } from '../../libs'
 
-function buildSignedTransaction(tx: Transaction, signature: string): string {
-  const [v, r, s] = eth.account.decodeSignature(signature)
-  const rlpData = [
-    eth.bytes.fromNat(tx.nonce), eth.bytes.fromNat(tx.gasPrice),
-    eth.bytes.fromNat(tx.gas), tx.to ? tx.to.toLowerCase() : '0x',
-    eth.bytes.fromNat(tx.value), tx.data ? tx.data : '0x', v, r, s
-  ]
-  return eth.RLP.encode(rlpData)
+function buildSignedTransaction(tx: Transaction, signature: string, chainId: BN): string {
+  tx.data = tx.data || '0x'
+  const rlpData = eth.transaction.signingData(tx)
+  const rawTransaction = eth.RLP.decode(rlpData)
+    .slice(0, 6)
+    .concat(eth.account.decodeSignature(signature))
+  const fixedV = Web3.utils.toBN(rawTransaction[6]).add(chainId.muln(2).addn(8))
+  rawTransaction[6] = eth.bytes.fromNat(Web3.utils.toHex(fixedV))
+  return eth.RLP.encode(rawTransaction)
 }
 
 export const HANDLERS: {
@@ -34,14 +35,17 @@ HANDLERS['eth_signTypedData'] = HANDLERS['eth_signTypedData_v3'] =
   HANDLERS['personal_signTypedData'] = HANDLERS['personal_signTypedData_v3'] =
   function (eth, request, netId) {
     return eth.signTypedData(request.params[0], request.params[1], netId)
+      .then(data => Web3.utils.asciiToHex(atob(data)))
   }
 
 HANDLERS['personal_sign'] = function (eth, request, netId) {
   return eth.signData(request.params[1], request.params[0], netId)
+    .then(data => Web3.utils.asciiToHex(atob(data)))
 }
 
 HANDLERS['eth_sign'] = function (eth, request, netId) {
   return eth.signData(request.params[0], request.params[1], netId)
+    .then(data => Web3.utils.asciiToHex(atob(data)))
 }
 
 HANDLERS['eth_sendTransaction'] = async function (eth, request, netId, chainId, provider) {
@@ -51,10 +55,13 @@ HANDLERS['eth_sendTransaction'] = async function (eth, request, netId, chainId, 
   if (!tx.gas) { tx.gas = Web3.utils.toHex((await estimateGas(provider, tx)).muln(1.3)) }
   const oldData = tx.data
   tx.data = tx.data ? btoa(String.fromCharCode(...Web3.utils.hexToBytes(tx.data))) : ''
-  const signature = await eth.signTx(tx, netId, chainId)
+  const signature = Web3.utils.asciiToHex(atob(await eth.signTx(tx, netId, chainId)))
   tx.data = oldData
-  const sendRawReq = Jsonrpc.toPayload('eth_sendRawTransaction', [buildSignedTransaction(tx, signature)])
+  const sendRawReq = Jsonrpc.toPayload(
+    'eth_sendRawTransaction',
+    [buildSignedTransaction(tx, signature, Web3.utils.toBN(chainId))]
+  )
   const response = await promisifiedSend(provider, sendRawReq) 
   if (response.error) throw response.error
-  return response
+  return response.result
 }

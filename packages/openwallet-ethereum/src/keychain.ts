@@ -18,7 +18,7 @@ export interface IAccountRequest extends IKeychainRequest<"get_account", HexStri
   networkId: number
 }
 
-export interface ISignTxRequest extends IKeychainRequest<"sign_transaction", HexString> {
+export interface ISignTxRequest extends IKeychainRequest<"sign_transaction", Base64String> {
   networkId: number
   nonce: Quantity
   from: HexString
@@ -30,13 +30,13 @@ export interface ISignTxRequest extends IKeychainRequest<"sign_transaction", Hex
   chainId: Quantity
 }
 
-export interface ISignDataRequest extends IKeychainRequest<"sign", HexString> {
+export interface ISignDataRequest extends IKeychainRequest<"sign", Base64String> {
   networkId: number
   account: HexString
   data: HexString
 }
 
-export interface ISignTypedDataRequest extends IKeychainRequest<"sign_typed_data", HexString> {
+export interface ISignTypedDataRequest extends IKeychainRequest<"sign_typed_data", Base64String> {
   networkId: number
   account: HexString
   data: object
