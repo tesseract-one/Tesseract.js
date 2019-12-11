@@ -176,6 +176,7 @@ export class CallbackURLProvider implements IProvider {
       window.addEventListener('hashchange', this.onHashChange.bind(this), false)
       document.addEventListener('visibilitychange', this.onVisibilityChange.bind(this), false)
       setInterval(this.timeoutHandler.bind(this), 1000)
+      this.onHashChange()
     }
   }
 
