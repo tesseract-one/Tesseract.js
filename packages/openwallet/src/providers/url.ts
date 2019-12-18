@@ -155,7 +155,7 @@ export class CallbackURLProvider implements IProvider {
 
     this.sendTimeout = setTimeout(this.sendTimeoutHandler.bind(this), CallbackURLProvider.popupWaitingTimeout*1000)
 
-    window.location.href = `${api}://?message=${data}&callback=${this.currentUrl()}`
+    window.location.href = `${api}://?message=${data}&callback=${encodeURIComponent(this.currentUrl())}`
   }
 
   private currentUrl() {
@@ -173,10 +173,10 @@ export class CallbackURLProvider implements IProvider {
   start() {
     if (!this.isWorking) {
       this.isWorking = true
+      this.onHashChange()
       window.addEventListener('hashchange', this.onHashChange.bind(this), false)
       document.addEventListener('visibilitychange', this.onVisibilityChange.bind(this), false)
       setInterval(this.timeoutHandler.bind(this), 1000)
-      this.onHashChange()
     }
   }
 
